@@ -914,7 +914,7 @@ function show_launch() {
     if [[ "$IS_SYS" -eq 1 && "$USE_ART" -eq 1 ]]; then
         # if using art look for images in paths for es art.
         images+=(
-            "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-image"
+            "$HOME/MasOS/roms/$SYSTEM/images/${ROM_BN}-image"
             "$HOME/.emulationstation/downloaded_images/$SYSTEM/${ROM_BN}-image"
         )
     fi
@@ -922,7 +922,7 @@ function show_launch() {
     # look for custom launching images
     if [[ "$IS_SYS" -eq 1 ]]; then
         images+=(
-            "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-launching"
+            "$HOME/MasOS/roms/$SYSTEM/images/${ROM_BN}-launching"
             "$CONF_ROOT/launching"
         )
     fi

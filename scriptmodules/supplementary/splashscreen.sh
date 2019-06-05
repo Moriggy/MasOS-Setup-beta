@@ -167,37 +167,37 @@ function choose_splashscreen() {
         printMsgs "dialog" "There are no splashscreens installed in $path"
         return
     fi
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose splashscreen." 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Elije splashscreen." 22 76 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -n "$choice" ]] && echo "$path/${options[choice*2+1]}"
 }
 
 function randomize_splashscreen() {
     options=(
-        1 "Randomize MasOS splashscreens"
-        2 "Randomize own splashscreens (from $datadir/splashscreens)"
-        3 "Randomize all splashscreens"
-        4 "Randomize /etc/splashscreen.list"
+        1 "Random MasOS splashscreens"
+        2 "Random own splashscreens (from $datadir/splashscreens)"
+        3 "Random all splashscreens"
+        4 "Random /etc/splashscreen.list"
     )
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Elije una opcion." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     iniConfig "=" '"' "$md_inst/asplashscreen.sh"
     case "$choice" in
         1)
             iniSet "RANDOMIZE" "retropie"
-            printMsgs "dialog" "Splashscreen randomizer habilitado en el directorio $path"
+            printMsgs "dialog" "Splashscreen randomr habilitado en el directorio $path"
             ;;
         2)
             iniSet "RANDOMIZE" "custom"
-            printMsgs "dialog" "Splashscreen randomizer habilitado en el directorio $path"
+            printMsgs "dialog" "Splashscreen random habilitado en el directorio $path"
             ;;
         3)
             iniSet "RANDOMIZE" "all"
-            printMsgs "dialog" "Splashscreen randomizer habilitado para ambos directorios de splashscreen."
+            printMsgs "dialog" "Splashscreen random habilitado para ambos directorios de splashscreen."
             ;;
         4)
             iniSet "RANDOMIZE" "list"
-            printMsgs "dialog" "Splashscreen randomizer habilitado para entradas en /etc/splashscreen.list"
+            printMsgs "dialog" "Splashscreen random habilitado para entradas en /etc/splashscreen.list"
             ;;
     esac
 }
@@ -212,7 +212,7 @@ function preview_splashscreen() {
     local path
     local file
     while true; do
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Elija una opcion." 22 86 16)
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Elije una opcion." 22 86 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         path="$(choose_path_splashscreen)"
@@ -255,7 +255,7 @@ function gui_splashscreen() {
         rp_callModule splashscreen depends
         rp_callModule splashscreen install
     fi
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Elija una opcion" 22 86 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Elije una opcion" 22 86 16)
     while true; do
         local enabled=0
         local random=0
