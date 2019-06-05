@@ -47,9 +47,14 @@ function restart_samba() {
 function install_shares_samba() {
     cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
     add_share_samba "roms" "$romdir"
-    add_share_samba "bios" "$home/RetroPie/BIOS"
+    add_share_samba "bios" "$home/MasOS/BIOS"
     add_share_samba "configs" "$configdir"
     add_share_samba "splashscreens" "$datadir/splashscreens"
+	add_share_samba "emulationstation" "$masosemulationstation"
+	add_share_samba "retroarch" "$retroarch" 
+# Agregar permisos para usuario pi en directorios nuevos
+	sudo chown -R $user:$user /etc/emulationstation
+	sudo chown -R $user:$user /opt/masos/configs/all/retroarch
     restart_samba
 }
 
@@ -62,13 +67,13 @@ function remove_shares_samba() {
 
 function gui_samba() {
     while true; do
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Elije una opcion" 22 76 16)
         local options=(
-            1 "Install RetroPie Samba shares"
-            2 "Remove RetroPie Samba shares"
-            3 "Manually edit /etc/samba/smb.conf"
-            4 "Restart Samba service"
-            5 "Remove Samba + configuration"
+            1 "Instalar MasOS Samba shares"
+            2 "Eliminar MasOS Samba shares"
+            3 "Edicion manual /etc/samba/smb.conf"
+            4 "Reiniciar Samba service"
+            5 "Eliminar Samba + configuracion"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
