@@ -37,8 +37,10 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
     cp -Rv "$md_data/icons" "$rpdir/"
-	cp -Rv "$home/MasOS-Setup/scriptmodules/extras/scripts/*" "$home/RetroPie/"
+	cp -Rv "$home/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu" "$home/RetroPie/"
+	cp -Rv "$home/MasOS-Setup-beta/scriptmodules/extras/scripts" "$home/RetroPie/"
     chown -R $user:$user "$rpdir"
+	chown -R $user:$user "$home/RetroPie/scripts/"
 
     isPlatform "rpi" && rm -f "$rpdir/dispmanx.rp"
 

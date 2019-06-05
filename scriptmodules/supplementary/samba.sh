@@ -44,6 +44,10 @@ function restart_samba() {
     service samba restart
 }
 
+# new samba shares by mabedeep: agregando rutas directas de ES y ovelays
+masosemulationstation="/etc/emulationstation"
+#fin -----------------------------------------------------------
+
 function install_shares_samba() {
     cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
     add_share_samba "roms" "$romdir"
@@ -51,10 +55,8 @@ function install_shares_samba() {
     add_share_samba "configs" "$configdir"
     add_share_samba "splashscreens" "$datadir/splashscreens"
 	add_share_samba "emulationstation" "$masosemulationstation"
-	add_share_samba "retroarch" "$retroarch" 
 # Agregar permisos para usuario pi en directorios nuevos
 	sudo chown -R $user:$user /etc/emulationstation
-	sudo chown -R $user:$user /opt/masos/configs/all/retroarch
     restart_samba
 }
 
