@@ -9,7 +9,7 @@
 # at https://raw.githubusercontent.com/MasOS/MasOS-Setup/master/LICENSE.md
 #
 
-__version="1.0.0"
+__version="1.5.0"
 
 [[ "$__debug" -eq 1 ]] && set -x
 
