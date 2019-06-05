@@ -48,7 +48,7 @@ function configure_retropiemenu()
         'bluetooth'
         'configedit'
         'esthemes'
-		'PersonalizarMasOS'
+		'PersonalizarMasOS.sh'
         'filemanager'
         'raspiconfig'
         'retroarch'
