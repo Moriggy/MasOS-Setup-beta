@@ -37,7 +37,7 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
     cp -Rv "$md_data/*" "$rpdir/"
-	cp -Rv /home/pi/MasOS-Setup/scriptmodules/extras/scripts /home/pi/RetroPie/
+	cp -Rv "$home/MasOS-Setup/scriptmodules/extras/scripts" "$rpdir/"
     chown -R $user:$user "$rpdir"
 
     isPlatform "rpi" && rm -f "$rpdir/dispmanx.rp"
@@ -48,7 +48,7 @@ function configure_retropiemenu()
         'bluetooth'
         'configedit'
         'esthemes'
-		'PersonalizarMasOS.sh'
+		'PersonalizarMasOS'
         'filemanager'
         'raspiconfig'
         'retroarch'
