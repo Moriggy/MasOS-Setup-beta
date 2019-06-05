@@ -24,7 +24,6 @@ git clone --depth=1 https://github.com/DOCK-PI3/MasOS-Setup.git
 ```
 
 ```shell
-sudo chmod -R +x MasOS-Setup/
 cd MasOS-Setup
 sudo ./masos_setup.sh
 ```

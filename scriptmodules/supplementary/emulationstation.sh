@@ -299,7 +299,7 @@ function configure_emulationstation() {
 
 function gui_emulationstation() {
     local es_swap=0
-    getAutoConf "es_swap_a_b" && es_swap=1
+    getAutoConf "es_swap_a_b" && es_swap=0
 
     local disable=0
     getAutoConf "disable" && disable=1
