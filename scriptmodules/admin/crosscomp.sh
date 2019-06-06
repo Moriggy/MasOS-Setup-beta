@@ -11,7 +11,7 @@
 
 rp_module_id="crosscomp"
 rp_module_desc="Create am arm cross compiler env - based on examples from http://preshing.com/20141119/how-to-build-a-gcc-cross-compiler"
-rp_module_help="Can be used via distcc to build RetroPie binaries"
+rp_module_help="Can be used via distcc to build MasOS binaries"
 rp_module_section=""
 rp_module_flags="!arm"
 

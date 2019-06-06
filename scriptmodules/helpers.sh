@@ -411,7 +411,7 @@ function setupDirectories() {
     # create template for autoconf.cfg and make sure it is owned by $user
     local config="$configdir/all/autoconf.cfg"
     if [[ ! -f "$config" ]]; then
-        echo "# this file can be used to enable/disable retropie autoconfiguration features" >"$config"
+        echo "# this file can be used to enable/disable masos autoconfiguration features" >"$config"
     fi
     chown $user:$user "$config"
 }
@@ -1011,7 +1011,7 @@ function ensureFBMode() {
     sed -i --follow-symlinks "/$res mode/,/endmode/d" /etc/fb.modes
 
     cat >> /etc/fb.modes <<_EOF_
-# added by RetroPie-Setup - $res mode for emulators
+# added by MasOS-Setup - $res mode for emulators
 mode "$res"
     geometry $res_x $res_y $res_x $res_y 16
     timings 0 0 0 0 0 0 0

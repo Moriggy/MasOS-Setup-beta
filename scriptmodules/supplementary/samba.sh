@@ -10,7 +10,7 @@
 #
 
 rp_module_id="samba"
-rp_module_desc="Configure Samba ROM Shares"
+rp_module_desc="Configurar Samba ROM Shares"
 rp_module_section="config"
 
 function depends_samba() {
@@ -83,11 +83,11 @@ function gui_samba() {
                 1)
                     rp_callModule "$md_id" depends
                     rp_callModule "$md_id" install_shares
-                    printMsgs "dialog" "Installed and enabled shares"
+                    printMsgs "dialog" "Instalado y activado shares"
                     ;;
                 2)
                     rp_callModule "$md_id" remove_shares
-                    printMsgs "dialog" "Removed shares"
+                    printMsgs "dialog" "Eliminados shares"
                     ;;
                 3)
                     editFile /etc/samba/smb.conf
@@ -97,7 +97,7 @@ function gui_samba() {
                     ;;
                 5)
                     rp_callModule "$md_id" depends remove
-                    printMsgs "dialog" "Removed Samba service"
+                    printMsgs "dialog" "Eliminar servicio Samba"
                     ;;
             esac
         else

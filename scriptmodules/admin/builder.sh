@@ -100,7 +100,7 @@ fi
 _EOF_
             rp_callModule image chroot "$md_build/$dist" bash /home/pi/install.sh
         else
-            git -C "$md_build/$dist/home/pi/MasOS-Setup" pull
+            git -C "$md_build/$dist/home/pi/MasOS-Setup-beta" pull
         fi
 
         for sys in rpi1 rpi2; do
@@ -109,9 +109,9 @@ _EOF_
                 PATH="/usr/lib/distcc:$PATH" \
                 MAKEFLAGS="-j4 PATH=/usr/lib/distcc:$PATH" \
                 __platform="$sys" \
-                /home/pi/MasOS-Setup/masos_pkgs.sh builder "$@"
+                /home/pi/MasOS-Setup-beta/masos_pkgs.sh builder "$@"
         done
 
-        rsync -av "$md_build/$dist/home/pi/MasOS-Setup/tmp/archives/" "$HOME/MasOS-Setup/tmp/archives/"
+        rsync -av "$md_build/$dist/home/pi/MasOS-Setup-beta/tmp/archives/" "$HOME/MasOS-Setup-beta/tmp/archives/"
     done
 }
