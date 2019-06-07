@@ -2,14 +2,13 @@
 
 # This file is part of The MasOS Project
 #
-# The MasOS Project is the legal property of its developers, whose names are
-# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
+# The MasOS Project es legal, esta contruido bajo raspbian que es de codigo abierto, en este nuevo
+# sistema trabajan unos pocos desarroladores independientes de diversas partes del planeta.
 #
-# See the LICENSE.md file at the top-level directory of this distribution and
-# at https://raw.githubusercontent.com/MasOS/MasOS-Setup/master/LICENSE.md
-#
+# MasOS El sistema operativo retro en español con emulationstation ,retroarch y varios scripts independientes mas configuraciones y themes nuevos.!
+#fork de retropie
 
-__version="1.5.5"
+__version="2.0.0"
 
 [[ "$__debug" -eq 1 ]] && set -x
 
@@ -45,17 +44,16 @@ __swapdir="$__tmpdir"
 
 # check, if sudo is used
 if [[ "$(id -u)" -ne 0 ]]; then
-    echo "Script must be run under sudo from the user you want to install for. Try 'sudo $0'"
+    echo "El script debe ejecutarse con sudo. ej: 'sudo $0'"
     exit 1
 fi
 
-__backtitle="masos.dx.am - MasOS Setup. Directorio de instalacion: $rootdir para el usuario: $user"
+__backtitle="http://masos.dx.am/ - MasOS-Setup. Directorio de instalacion: $rootdir para el usuario $user"
 
 source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/inifuncs.sh"
 source "$scriptdir/scriptmodules/packages.sh"
-
 setup_env
 
 rp_registerAllModules

@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
 
-# This file is part of The RetroPie Project
+# This file is part of The MasOS Project
 #
-# The RetroPie Project is the legal property of its developers, whose names are
+# The MasOS Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
+
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="splashscreen"
-rp_module_desc="Configure Splashscreen"
+rp_module_desc="Configurar Splashscreen"
 rp_module_section="main"
 rp_module_flags="noinstclean !x86 !osmc !xbian !mali !kms"
 
 function _update_hook_splashscreen() {
-    # make sure splashscreen is always up to date if updating just RetroPie-Setup
+    # make sure splashscreen is always up to date if updating just MasOS
     if rp_isInstalled "$md_idx"; then
         install_bin_splashscreen
         configure_splashscreen
@@ -52,7 +53,7 @@ RemainAfterExit=yes
 WantedBy=sysinit.target
 _EOF_
 
-    gitPullOrClone "$md_inst" https://github.com/DOCK-PI3/masos-splashscreens.git
+    gitPullOrClone "$md_inst" https://github.com/DOCK-PI3/masos-splashscreens
 
     cp "$md_data/asplashscreen.sh" "$md_inst"
 
@@ -114,9 +115,9 @@ function remove_splashscreen() {
 function choose_path_splashscreen() {
     local options=(
         1 "MasOS splashscreens"
-        2 "Propios/Extra splashscreens (desde $datadir/splashscreens)"
+        2 "Own/Extra splashscreens (from $datadir/splashscreens)"
     )
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Elije una opcion." 22 86 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ "$choice" -eq 1 ]] && echo "$md_inst"
     [[ "$choice" -eq 2 ]] && echo "$datadir/splashscreens"
@@ -134,12 +135,12 @@ function set_append_splashscreen() {
         if [[ -n "$file" ]]; then
             if [[ "$mode" == "set" ]]; then
                 echo "$file" >/etc/splashscreen.list
-                printMsgs "dialog" "Splashscreen configurado en '$file'"
+                printMsgs "dialog" "Splashscreen set to '$file'"
                 break
             fi
             if [[ "$mode" == "append" ]]; then
                 echo "$file" >>/etc/splashscreen.list
-                printMsgs "dialog" "Splashscreen '$file' añadido a /etc/splashscreen.list"
+                printMsgs "dialog" "Splashscreen '$file' appended to /etc/splashscreen.list"
             fi
         fi
     done
@@ -173,10 +174,10 @@ function choose_splashscreen() {
 
 function randomize_splashscreen() {
     options=(
-        1 "Random MasOS splashscreens"
-        2 "Random de los splashscreens (de $datadir/splashscreens)"
-        3 "Random de todos los splashscreens"
-        4 "Random /etc/splashscreen.list"
+        1 "Randomize MasOS splashscreens"
+        2 "Randomize own splashscreens (from $datadir/splashscreens)"
+        3 "Randomize all splashscreens"
+        4 "Randomize /etc/splashscreen.list"
     )
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -184,19 +185,19 @@ function randomize_splashscreen() {
     case "$choice" in
         1)
             iniSet "RANDOMIZE" "retropie"
-            printMsgs "dialog" "Splashscreen random habilitado en el directorio $path"
+            printMsgs "dialog" "Splashscreen randomizer habilitado en el directorio $path"
             ;;
         2)
             iniSet "RANDOMIZE" "custom"
-            printMsgs "dialog" "Splashscreen random habilitado en el directorio $path"
+            printMsgs "dialog" "Splashscreen randomizer habilitado en el directorio $path"
             ;;
         3)
             iniSet "RANDOMIZE" "all"
-            printMsgs "dialog" "Splashscreen random habilitado para ambos directorios de splashscreen."
+            printMsgs "dialog" "Splashscreen randomizer habilitado para ambos directorios de splashscreen."
             ;;
         4)
             iniSet "RANDOMIZE" "list"
-            printMsgs "dialog" "Splashscreen random habilitado para entradas en /etc/splashscreen.list"
+            printMsgs "dialog" "Splashscreen randomizer habilitado para entradas en /etc/splashscreen.list"
             ;;
     esac
 }
@@ -211,7 +212,7 @@ function preview_splashscreen() {
     local path
     local file
     while true; do
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Elije una opcion." 22 86 16)
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Elija una opcion." 22 86 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         path="$(choose_path_splashscreen)"
@@ -245,7 +246,7 @@ function preview_splashscreen() {
 }
 
 function download_extra_splashscreen() {
-    gitPullOrClone "$datadir/splashscreens/retropie-extra" https://github.com/DOCK-PI3/masos-splashscreens-extra
+    gitPullOrClone "$datadir/splashscreens/masos-extra" https://github.com/DOCK-PI3/masos-splashscreens-extra
     chown -R $user:$user "$datadir/splashscreens/masos-extra"
 }
 
@@ -254,12 +255,12 @@ function gui_splashscreen() {
         rp_callModule splashscreen depends
         rp_callModule splashscreen install
     fi
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Elije una opcion." 22 86 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Elija una opcion" 22 86 16)
     while true; do
         local enabled=0
         local random=0
         [[ -n "$(find "/etc/systemd/system/"*".wants" -type l -name "asplashscreen.service")" ]] && enabled=1
-        local options=(1 "Elige splashscreen")
+        local options=(1 "Elija splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
             options+=(2 "Deshabilitar splashscreen en el arranque (Habilitado)")
             iniConfig "=" '"' "$md_inst/asplashscreen.sh"

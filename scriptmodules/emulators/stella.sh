@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_stella() {
-    getDepends libsdl2-dev libpng-dev zlib1g-dev xz-utils
+    getDepends libsdl2-dev libpng12-dev zlib1g-dev xz-utils
 }
 
 function sources_stella() {
@@ -38,6 +38,7 @@ function install_stella() {
 function configure_stella() {
     mkRomDir "atari2600"
 
+    mkUserDir "$home/.config"
     moveConfigDir "$home/.config/stella" "$md_conf_root/atari2600/stella"
 
     addEmulator 1 "$md_id" "atari2600" "$md_inst/bin/stella -maxres 320x240 -fullscreen 1 -tia.fsfill 1 %ROM%"

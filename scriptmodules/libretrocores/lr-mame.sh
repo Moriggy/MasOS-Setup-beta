@@ -33,7 +33,7 @@ function sources_lr-mame() {
 }
 
 function build_lr-mame() {
-    rpSwap on 2000
+    rpSwap on 1400
     local params=($(_get_params_lr-mame) SUBTARGET=arcade)
     make clean
     make "${params[@]}"

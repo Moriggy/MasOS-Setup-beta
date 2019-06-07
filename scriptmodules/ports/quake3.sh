@@ -20,11 +20,11 @@ function depends_quake3() {
 }
 
 function sources_quake3() {
-    gitPullOrClone "$md_build" https://github.com/raspberrypi/quake3.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/quake3.git
 }
 
 function build_quake3() {
-    ./build_rpi_raspbian.sh
+    ./build.sh
 }
 
 function install_quake3() {

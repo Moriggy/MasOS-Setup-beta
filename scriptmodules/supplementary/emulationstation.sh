@@ -128,8 +128,7 @@ function depends_emulationstation() {
         libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
         libvlc-dev libvlccore-dev vlc
     )
-	
-	compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
+
     isPlatform "x11" && depends+=(gnome-terminal)
     getDepends "${depends[@]}"
 }
@@ -138,13 +137,7 @@ function sources_emulationstation() {
     local repo="$1"
     local branch="$2"
     [[ -z "$repo" ]] && repo="https://github.com/DOCK-PI3/EmulationStation"
-    if [[ -z "$branch" ]]; then
-        if compareVersions "$__os_debian_ver" gt 8; then
-            branch="stable"
-        else
-            branch="v2.7.6"
-        fi
-    fi
+    [[ -z "$branch" ]] && branch="stable"
     gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
@@ -164,7 +157,6 @@ function install_emulationstation() {
         'emulationstation.sh'
         'GAMELISTS.md'
         'README.md'
-		'resources'
         'THEMES.md'
     )
 }

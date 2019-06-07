@@ -33,4 +33,3 @@ index 47c831c728..b62d7b435e 100644
     }
  
     if (binds[RARCH_GAME_FOCUS_TOGGLE].valid)
-

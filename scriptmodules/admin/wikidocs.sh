@@ -36,5 +36,5 @@ function install_wikidocs() {
 }
 
 function upload_wikidocs() {
-    rsync -av --delete "$__tmpdir/wikidocs/" "masos@$__binary_host:docs/"
+    rsync -av --delete "$__tmpdir/wikidocs/" "retropie@$__binary_host:docs/"
 }

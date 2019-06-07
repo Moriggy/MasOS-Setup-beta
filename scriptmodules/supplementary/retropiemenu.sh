@@ -7,10 +7,10 @@
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
-#
+# Menu de retropie usado en MasOS....
 
 rp_module_id="retropiemenu"
-rp_module_desc="RetroPie configuration menu for EmulationStation"
+rp_module_desc="MasOS configuration menu for EmulationStation"
 rp_module_section="core"
 
 function _update_hook_retropiemenu() {
@@ -37,70 +37,70 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
     cp -Rv "$md_data/icons" "$rpdir/"
-	cp -Rv "$home/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu" "$home/RetroPie/"
-	cp -Rv "$home/MasOS-Setup-beta/scriptmodules/extras/scripts" "$home/RetroPie/"
     chown -R $user:$user "$rpdir"
-	chown -R $user:$user "$home/RetroPie/scripts/"
 
     isPlatform "rpi" && rm -f "$rpdir/dispmanx.rp"
 
     # add the gameslist / icons
     local files=(
         'audiosettings'
-        'bluetooth'
+        # 'backgroundmusic'
+		# 'bezelproject'
+		# 'bezels'
+		'bluetooth'
         'configedit'
         'esthemes'
-		'PersonalizarMasOS'
         'filemanager'
         'raspiconfig'
         'retroarch'
         'retronetplay'
         'rpsetup'
         'runcommand'
-        'showip'
+        # 'showip'
         'splashscreen'
+		# 'videoloading'
         'wifi'
+		# 'masosupdateallsystem'
     )
 
     local names=(
         'Audio'
+		# 'Musica de Fondo'
+		# 'Project Bezels'
+		# 'Bezels'
         'Bluetooth'
-        'Editar configuración'
+        'Editar Config'
         'ES Themes'
-		'Personalizar MasOS'
         'File Manager'
         'Raspi-Config'
         'Retroarch'
         'RetroArch Net Play'
-        'MasOS-Setup'
-        'Configuración del Run Command'
-        'Ver IP'
-        'Splash Screens'
-        'WiFi agregar o editar configuración'
+        'MasOS Setup'
+        'Run Command Configuration'
+        # 'Mostrar tu IP'
+        'Configurar Splash Screens'
+		# 'Videoloadind script'
+        'WiFi agregar o editar config'
     )
 
     local descs=(
-        'Configuraciones de audio. Elija predeterminado de auto, jack de 3.5 mm o HDMI. Controles del mezclador y aplicar configuraciones predeterminadas.'
-        'Regístrese y conéctese a dispositivos bluetooth. Anule el registro y elimine los dispositivos y visualice los dispositivos registrados y conectados.'
+        'Configuraciones de audio Elija predeterminado de auto, jack de 3.5 mm o HDMI. Controles del mezclador y aplicar configuraciones predeterminadas.'
+        # 'Musica de Fondo en MasOS'
+		# 'Project Bezels ,cientos de bezels configurados y instalados con un simple clic.'
+		# 'Bezels - Activa o desactiva rapidamente los bezels que tengas activos'
+		'Regístrese y conéctese a dispositivos bluetooth. Anule el registro y elimine los dispositivos y visualice los dispositivos registrados y conectados.'
         'Cambie las opciones comunes de RetroArch y edite manualmente las configuraciones de RetroArch, las configuraciones globales y las configuraciones que no son de RetroArch.'
-        'Instalar, desinstalar o actualizar themes de EmulationStation. Muchos de los themes se pueden previsualizar en http://es-themes-masos.ml/.'
-        'Muchas opciones mas para MasOS con solo un clic.
-
-Podras instalar:
-
-Bezels
-Launching image screens
-Video Loading Screens
-
-O tambien podras hacer overclock.'
-		'Administrador de archivos básico de ASCII para Linux que le permite navegar, copiar, eliminar y mover archivos.'
+        'Install, uninstall, or update EmulationStation themes. Most themes can be previewed at ..... coming soon!.'
+        'Administrador de archivos básico de ASCII para Linux que le permite navegar, copiar, eliminar y mover archivos.'
         'Cambie la contraseña del usuario, las opciones de arranque, la internacionalización, la cámara, agregue su pi a Rastrack, overclock, overscan, división de memoria, SSH y más.'
         'Inicia la GUI de RetroArch para que pueda cambiar las opciones de RetroArch. Nota: Los cambios no se guardarán a menos que haya habilitado la opción "Guardar configuración al salir".'
         'Configure las opciones de RetroArch Netplay, elija host o cliente, puerto, IP de host, marcos de demora y su apodo.'
         'Instale MasOS desde binario o fuente, instale paquetes experimentales, controladores adicionales, edite recursos compartidos de samba, raspador personalizado, así como otras configuraciones relacionadas con MasOS.'
         'Change what appears on the runcommand screen. Enable or disable the menu, enable or disable box art, and change CPU configuration.'
+        # 'Muestra su dirección IP actual, así como otra información proporcionada por el comando, "ip addr show."'
         'Habilite o deshabilite la pantalla secundaria en el inicio de MasOS. Elija una pantalla secundaria, descargue nuevas pantallas emergentes y regrese la pantalla secundaria a la predeterminada.'
-        'Conéctese o desconecte de una red wifi y configure wifi.'
+        # 'Reproducier video mientras carga la rom.'
+		'Conéctese o desconecte de una red wifi y configure wifi.'
     )
 
     setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/masos_pkgs.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
@@ -164,8 +164,8 @@ function launch_retropiemenu() {
             mc
             ;;
         showip.rp)
-            local ip="$(getIPAddress)"
-            printMsgs "dialog" "Your IP is: ${ip:-(unknown)}\n\nOutput of 'ip addr show':\n\n$(ip addr show)"
+            local ip="$(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')"
+            printMsgs "dialog" "Su IP es: $ip\n\nOutput of 'ip addr show':\n\n$(ip addr show)"
             ;;
         *.rp)
             rp_callModule $no_ext depends
