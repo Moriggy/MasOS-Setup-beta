@@ -13,7 +13,7 @@ rp_module_id="amiberry"
 rp_module_desc="Amiga emulator with JIT support (forked from uae4arm)"
 rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/midwan/amiberry/master/COPYING"
-rp_module_section="opt"
+rp_module_section="main"
 rp_module_flags="!x86"
 
 function depends_amiberry() {
@@ -81,6 +81,9 @@ function install_amiberry() {
 
 function configure_amiberry() {
     configure_uae4arm
+
+    [[ "$md_mode" == "remove" ]] && return
+
     # symlink the retroarch config / autoconfigs for amiberry to use
     ln -sf "$configdir/all/retroarch/autoconfig" "$md_inst/controllers"
     ln -sf "$configdir/all/retroarch.cfg" "$md_inst/conf/retroarch.cfg"

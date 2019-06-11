@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# This file is part of The MasOS Project
+# This file is part of The RetroPie Project
 #
-# The MasOS Project is the legal property of its developers, whose names are
+# The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
-# at https://raw.githubusercontent.com/MasOS/MasOS-Setup/master/LICENSE.md
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="setup"
@@ -74,7 +74,7 @@ function depends_setup() {
     fi
 
     if [[ "$__os_debian_ver" -eq 8 ]]; then
-        printMsgs "dialog" "Raspbian/Debian Jessie and versions of Ubuntu below 18.04 are no longer supported.\n\nPlease install MasOS 4.4 or newer from a fresh image which is based on Raspbian Stretch (or if running Ubuntu, upgrade your OS)."
+        printMsgs "dialog" "Raspbian/Debian Jessie and versions of Ubuntu below 18.04 are no longer supported.\n\nPlease install MasOS 1.0 or newer from a fresh image which is based on Raspbian Stretch (or if running Ubuntu, upgrade your OS)."
     fi
 
     # make sure user has the correct group permissions
@@ -96,9 +96,9 @@ function updatescript_setup()
     clear
     chown -R $user:$user "$scriptdir"
     printHeading "Fetching latest version of the MasOS Setup Script."
-	pushd "$scriptdir" >/dev/null
+    pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then
-        printMsgs "dialog" "Cannot find directory '.git'. Please clone the MasOS Setup script via 'git clone https://github.com/MasOS/MasOS-Setup.git'"
+        printMsgs "dialog" "Cannot find directory '.git'. Please clone the MasOS Setup script via 'git clone https://github.com/RetroPie/RetroPie-Setup.git'"
         popd >/dev/null
         return 1
     fi
@@ -110,7 +110,7 @@ function updatescript_setup()
     fi
     popd >/dev/null
 
-    printMsgs "dialog" "Ya tienes la última versión del script de MasOS-Setup."
+    printMsgs "dialog" "Fetched the latest version of the MasOS Setup script."
     return 0
 }
 
@@ -135,7 +135,7 @@ function post_update_setup() {
     } &> >(_setup_gzip_log "$logfilename")
     rps_printInfo "$logfilename"
 
-    printMsgs "dialog" "NOTICE: The MasOS-Setup script and pre-made MasOS SD card images are available to download for free from https://retropie.org.uk.\n\nThe pre-built MasOS image includes software that has non commercial licences. Selling MasOS images or including MasOS with your commercial product is not allowed.\n\nNo copyrighted games are included with MasOS.\n\nIf you have been sold this software, you can let us know about it by emailing masosproject@gmail.com."
+    printMsgs "dialog" "NOTICE: The MasOS-Setup script and pre-made MasOS SD card images are available to download for free from https://masos.dx.am.\n\nThe pre-built MasOS image includes software that has non commercial licences. Selling MasOS images or including MasOS with your commercial product is not allowed.\n\nNo copyrighted games are included with MasOS.\n\nIf you have been sold this software, you can let us know about it by emailing masosteam@gmail.com."
 
     # return to set return function
     "${return_func[@]}"
@@ -501,25 +501,25 @@ function gui_setup() {
     while true; do
         local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
-        cmd=(dialog --backtitle "$__backtitle" --title "MasOS-Setup Script" --cancel-label "Salir" --item-help --help-button --default-item "$default" --menu "Version: $__version\nLast Commit: $commit" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --title "MasOS-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version\nLast Commit: $commit" 22 76 16)
         options=(
-            I "Instalación básica" "I This will install all packages from Core and Main which gives a basic MasOS install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+            I "Basic install" "I This will install all packages from Core and Main which gives a basic MasOS install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
 
-            U "Actualizar" "U Updates MasOS-Setup and all currently installed packages. Will also allow to update OS packages. If binaries are available they will be used, otherwise packages will be built from source."
+            U "Update" "U Updates MasOS-Setup and all currently installed packages. Will also allow to update OS packages. If binaries are available they will be used, otherwise packages will be built from source."
 
-            P "Administración de paquetes"
+            P "Manage packages"
             "P Install/Remove and Configure the various components of MasOS, including emulators, ports, and controller drivers."
 
-            C "Configuración / herramientas"
+            C "Configuration / tools"
             "C Configuration and Tools. Any packages you have installed that have additional configuration options will also appear here."
 
-            S "Actualizar el script MasOS-Setup"
+            S "Update MasOS-Setup script"
             "S Update this MasOS-Setup script. This will update this main management script only, but will not update any software packages. To update packages use the 'Update' option from the main menu, which will also update the MasOS-Setup script."
 
-            X "Desinstalar MasOS"
+            X "Uninstall MasOS"
             "X Uninstall MasOS completely."
 
-            R "Realizar reinicio"
+            R "Perform reboot"
             "R Reboot your machine."
         )
 

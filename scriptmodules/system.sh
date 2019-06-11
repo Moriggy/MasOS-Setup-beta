@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-# This file is part of The MasOS Project
+# This file is part of The RetroPie Project
 #
-# The MasOS Project es legal, esta contruido bajo raspbian que es de codigo abierto, en este nuevo
-# sistema trabajan unos pocos desarroladores independientes de diversas partes del planeta.
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
-#creado con retropie script setup
+# See the LICENSE.md file at the top-level directory of this distribution and
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+#
 
 function setup_env() {
 
@@ -74,13 +76,16 @@ function get_os_version() {
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
-			# Debian unstable is not officially supported though
+            # get major version (8 instead of 8.0 etc)
+            __os_debian_ver="${__os_release%%.*}"
+
+            # Debian unstable is not officially supported though
             if [[ "$__os_release" == "unstable" ]]; then
                 __os_release=10
             fi
 
-            if compareVersions "$__os_release" lt 8; then
-                error="You need Raspbian/Debian Jessie or newer"
+            if compareVersions "$__os_debian_ver" lt 8; then
+                error="You need Raspbian/Debian Stretch or newer"
             fi
 
             # set a platform flag for osmc
@@ -93,29 +98,35 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
-            # we provide binaries for RPI on Raspbian < 10 only
-            if isPlatform "rpi" && compareVersions "$__os_release" lt 10; then
+            # we provide binaries for RPI on Raspbian 9 only
+            if isPlatform "rpi" && compareVersions "$__os_debian_ver" gt 8 && compareVersions "$__os_debian_ver" lt 10; then
                 __has_binaries=1
             fi
-
-            # get major version (8 instead of 8.0 etc)
-            __os_debian_ver="${__os_release%%.*}"
             ;;
         Devuan)
+            if isPlatform "rpi"; then
+                error="We do not support Devuan on the Raspberry Pi. We recommend you use Raspbian to run MasOS."
+            fi
             # devuan lsb-release version numbers don't match jessie
             case "$__os_codename" in
                 jessie)
                     __os_debian_ver="8"
                     ;;
+                ascii)
+                    __os_debian_ver="9"
+                    ;;
+                beowolf)
+                    __os_debian_ver="10"
+                    ;;
+                ceres)
+                    __os_debian_ver="11"
+                    ;;
             esac
             ;;
         LinuxMint)
             if [[ "$__os_desc" != LMDE* ]]; then
-                if compareVersions "$__os_release" lt 17; then
-                    error="You need Linux Mint 17 or newer"
-                elif compareVersions "$__os_release" lt 18; then
-                    __os_ubuntu_ver="14.04"
-                    __os_debian_ver="8"
+                if compareVersions "$__os_release" lt 18; then
+                    error="You need Linux Mint 18 or newer"
                 elif compareVersions "$__os_release" lt 19; then
                     __os_ubuntu_ver="16.04"
                     __os_debian_ver="8"
@@ -126,8 +137,8 @@ function get_os_version() {
             fi
             ;;
         Ubuntu)
-            if compareVersions "$__os_release" lt 14.04; then
-                error="You need Ubuntu 14.04 or newer"
+            if compareVersions "$__os_release" lt 16.04; then
+                error="You need Ubuntu 16.04 or newer"
             elif compareVersions "$__os_release" lt 16.10; then
                 __os_debian_ver="8"
             else
@@ -142,17 +153,23 @@ function get_os_version() {
             __os_debian_ver="9"
             ;;
         elementary)
-            if compareVersions "$__os_release" lt 0.3; then
-                error="You need Elementary OS 0.3 or newer"
-            elif compareVersions "$__os_release" lt 0.4; then
-                __os_ubuntu_ver="14.04"
-            else
+            if compareVersions "$__os_release" lt 0.4; then
+                error="You need Elementary OS 0.4 or newer"
+            elif compareVersions "$__os_release" eq 0.4; then
                 __os_ubuntu_ver="16.04"
+                __os_debian_ver="8"
+            else
+                __os_ubuntu_ver="18.04"
+                __os_debian_ver="9"
             fi
-            __os_debian_ver="8"
             ;;
         neon)
-             __os_ubuntu_ver="$__os_release"
+            __os_ubuntu_ver="$__os_release"
+            if compareVersions "$__os_release" lt 16.10; then
+                __os_debian_ver="8"
+            else
+                __os_debian_ver="9"
+            fi
             ;;
         *)
             error="Unsupported OS"
@@ -242,6 +259,9 @@ function get_platform() {
                 ;;
             Vero4K)
                 __platform="vero4k"
+                ;;
+            "Allwinner sun8i Family")
+                __platform="armv7-mali"
                 ;;
             *)
                 case $architecture in

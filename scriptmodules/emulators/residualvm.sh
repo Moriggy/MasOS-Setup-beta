@@ -19,7 +19,7 @@ rp_module_flags="dispmanx !mali !kms"
 function depends_residualvm() {
     local depends=(
         libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev
-        libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev
+        libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev
         zlib1g-dev libjpeg-dev
     )
     isPlatform "x11" && depends+=(libglew-dev)
@@ -62,11 +62,7 @@ function install_residualvm() {
 function configure_residualvm() {
     mkRomDir "residualvm"
 
-    local dir
-    for dir in .config .cache; do
-        mkUserDir "$home/$dir"
-        moveConfigDir "$home/$dir/residualvm" "$md_conf_root/residualvm"
-    done
+    moveConfigDir "$home/.config/residualvm" "$md_conf_root/residualvm"
 
     # Create startup script
     cat > "$romdir/residualvm/+Start ResidualVM.sh" << _EOF_

@@ -50,7 +50,7 @@ function _add_system_attractmode() {
 
     # snap path
     local snap="snap"
-    [[ "$name" == "retropie" ]] && snap="icons"
+    [[ "$name" == "masos" ]] && snap="icons"
     iniSet "artwork flyer" "$path/flyer"
     iniSet "artwork marquee" "$path/marquee"
     iniSet "artwork snap" "$path/$snap"

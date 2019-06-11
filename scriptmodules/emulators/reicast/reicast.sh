@@ -11,7 +11,7 @@
 
 AUDIO="$1"
 ROM="$2"
-rootdir="/opt/masos"
+rootdir="/opt/retropie"
 configdir="$rootdir/configs"
 
 source "$rootdir/lib/inifuncs.sh"
@@ -33,7 +33,7 @@ function mapInput() {
         for ev_device in /dev/input/event*; do
             ev_device_num=${ev_device/\/dev\/input\/event/}
             if [[ -d "/sys/class/input/event${ev_device_num}/device/js${js_device_num}" ]]; then
-                file[$ev_device_num]=$(grep --exclude=*.bak -rl "$configdir/dreamcast/mappings/" -e "= $(</sys/class/input/event${ev_device_num}/device/name)")
+                file[$ev_device_num]=$(grep --exclude=*.bak -rl -m 1 "$configdir/dreamcast/mappings/" -e "= $(</sys/class/input/event${ev_device_num}/device/name)" | tail -n 1)
                 if [[ -f "${file[$ev_device_num]}" ]]; then
                     #file[$ev_device_num]="${file[$ev_device_num]##*/}"
                     ev_devices[$ev_device_num]=$(</sys/class/input/event${ev_device_num}/device/name)
@@ -72,7 +72,7 @@ function mapInput() {
     echo "$params"
 }
 
-if [[ ! -f "$HOME/MasOS/BIOS/dc/dc_boot.bin" ]]; then
+if [[ ! -f "$HOME/RetroPie/BIOS/dc/dc_boot.bin" ]]; then
     dialog --no-cancel --pause "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76 15
     exit 1
 fi

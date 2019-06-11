@@ -117,7 +117,6 @@ function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
 
     # move / symlink the retroarch configuration
-    mkUserDir "$home/.config"
     moveConfigDir "$home/.config/retroarch" "$configdir/all/retroarch"
 
     # move / symlink our old retroarch-joypads folder
@@ -149,8 +148,8 @@ function configure_retroarch() {
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
-	iniSet "rgui_show_start_screen" "false"
-	
+    iniSet "rgui_show_start_screen" "false"
+
     if ! isPlatform "x86"; then
         iniSet "video_threaded" "true"
     fi
