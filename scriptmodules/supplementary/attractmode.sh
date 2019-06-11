@@ -128,7 +128,7 @@ function depends_attractmode() {
     )
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "x11" && depends+=(libsfml-dev)
-    getDepends "${depends[@]}" 
+    getDepends "${depends[@]}"
 }
 
 function sources_attractmode() {

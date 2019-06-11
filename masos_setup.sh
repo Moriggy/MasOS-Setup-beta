@@ -13,4 +13,3 @@ scriptdir="$(dirname "$0")"
 scriptdir="$(cd "$scriptdir" && pwd)"
 
 "$scriptdir/masos_pkgs.sh" setup gui
-

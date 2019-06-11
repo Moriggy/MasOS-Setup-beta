@@ -115,7 +115,7 @@ function build_crosscomp() {
     printHeading "Building gcc"
     mkdir -p build-gcc
     cd build-gcc
-    ../gcc/configure --prefix="$dest" --target="$target" --enable-languages=c,c++ --disable-multilib --disable-werror "${params[@]}" 
+    ../gcc/configure --prefix="$dest" --target="$target" --enable-languages=c,c++ --disable-multilib --disable-werror "${params[@]}"
     make all-gcc
     make install-gcc
     cd ..
@@ -158,7 +158,7 @@ function build_crosscomp() {
 function setup_crosscomp() {
     local dist="$1"
     [[ -z "$dist" ]] && dist="$(_default_dist_crosscomp)"
-    
+
     if rp_callModule crosscomp sources "$dist"; then
         rp_callModule crosscomp build "$dist"
         rp_callModule crosscomp switch_distcc "$dist"

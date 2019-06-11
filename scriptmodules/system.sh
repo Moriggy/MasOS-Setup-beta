@@ -72,7 +72,7 @@ function get_os_version() {
     __os_desc="${os[1]}"
     __os_release="${os[2]}"
     __os_codename="${os[3]}"
-    
+
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
@@ -175,7 +175,7 @@ function get_os_version() {
             error="Unsupported OS"
             ;;
     esac
-    
+
     [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
 
     # add 32bit/64bit to platform flags
@@ -382,4 +382,3 @@ function platform_vero4k() {
     __default_makeflags="-j4"
     __platform_flags="arm armv8 neon vero4k gles"
 }
-
