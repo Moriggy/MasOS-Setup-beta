@@ -106,27 +106,6 @@ function updatescript_setup()
     fi
     popd >/dev/null
 
-    # Añadido para copiar los archivos del menu opciones
-    if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
-      cd
-      sudo cp /home/pi/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
-      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/scripts /home/pi/RetroPie/
-      sudo chmod -R +x /home/pi/RetroPie
-      sudo chmod -R +x /opt/
-      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
-  else
-      if [[ -f $home/.config/autostart/masos.desktop ]]; then
-        cd
-        sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-        sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
-        sudo cp -R ~/MasOS-Setup/scriptmodules/extras/scripts ~/RetroPie/
-        sudo chmod -R +x ~/RetroPie
-        sudo chmod -R +x /opt/
-        sudo chown -R $user:$user ~/MasOS
-      fi
-      # FIN DEL AÑADIDO
-
     printMsgs "dialog" "Ya tiene la ultima version del script de configuracion de MasOS."
     return 0
 }
@@ -134,6 +113,27 @@ function updatescript_setup()
 function post_update_setup() {
     local return_func=("$@")
 
+        # Añadido para copiar los archivos del menu opciones
+        if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
+          cd
+          sudo cp /home/pi/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+          sudo cp -R /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+          sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/scripts /home/pi/RetroPie/
+          sudo chmod -R +x /home/pi/RetroPie
+          sudo chmod -R +x /opt/
+          sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+      else
+          if [[ -f $home/.config/autostart/masos.desktop ]]; then
+            cd
+            sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+            sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+            sudo cp -R ~/MasOS-Setup/scriptmodules/extras/scripts ~/RetroPie/
+            sudo chmod -R +x ~/RetroPie
+            sudo chmod -R +x /opt/
+            sudo chown -R $user:$user ~/MasOS
+          fi
+          # FIN DEL AÑADIDO
+          
     joy2keyStart
 
     echo "$__version" >"$rootdir/VERSION"
