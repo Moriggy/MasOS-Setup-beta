@@ -606,28 +606,28 @@ function gui_setup() {
                 if updatescript_setup; then
                     joy2keyStop
 
+                    exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
+
                     # Añadido para copiar los archivos del menu opciones
                     if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
                       cd
-                      sudo cp /home/pi/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-                      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
-                      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/scripts /home/pi/RetroPie/
+                      sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
                       sudo chmod -R +x /home/pi/RetroPie
                       sudo chmod -R +x /opt/
                       sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
                     fi
-                  if [[ -f $home/.config/autostart/masos.desktop ]]; then
-                        cd
-                        sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-                        sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
-                        sudo cp -R ~/MasOS-Setup/scriptmodules/extras/scripts ~/RetroPie/
-                        sudo chmod -R +x ~/RetroPie
-                        sudo chmod -R +x /opt/
-                        sudo chown -R $user:$user ~/MasOS
-                  fi
-                      # FIN DEL AÑADIDO
-
-                    exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
+                    if [[ -f $home/.config/autostart/masos.desktop ]]; then
+                      cd
+                      sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                      sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+                      sudo cp -R ~/MasOS-Setup/scriptmodules/extras/scripts ~/RetroPie/
+                      sudo chmod -R +x ~/RetroPie
+                      sudo chmod -R +x /opt/
+                      sudo chown -R $user:$user ~/MasOS
+                    fi
+                    # FIN DEL AÑADIDO
                 fi
                 ;;
             X)
@@ -642,10 +642,10 @@ function gui_setup() {
                 ;;
             R)
                 dialog --defaultno --yesno "¿Estás seguro de que quieres reiniciar?\n\nTen en cuenta que si reinicias cuando se está ejecutando Emulation Station, perderás los cambios en los metadatos." 22 76 2>&1 >/dev/tty || continue
-				sudo cp /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
-				sudo chmod +x /home/pi/RetroPie/retropiemenu/masosextrasall.sh
-				sudo cp ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh ~/RetroPie/retropiemenu/
-                sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
+				# sudo cp /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
+				# sudo chmod +x /home/pi/RetroPie/retropiemenu/masosextrasall.sh
+				# sudo cp ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh ~/RetroPie/retropiemenu/
+        # sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
 				reboot_setup
                 ;;
         esac
