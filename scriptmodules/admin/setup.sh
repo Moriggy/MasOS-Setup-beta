@@ -583,6 +583,7 @@ function gui_setup() {
                   sudo chmod -R +x /home/pi/RetroPie
                   sudo chmod -R +x /opt/
                   sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+                fi
               else
                   if [[ -f $home/.config/autostart/masos.desktop ]]; then
                     cd
@@ -593,7 +594,7 @@ function gui_setup() {
                     sudo chmod -R +x /opt/
                     sudo chown -R $user:$user ~/MasOS
                   fi
-                  # FIN DEL AÑADIDO                  
+                  # FIN DEL AÑADIDO
                 ;;
             P)
                 packages_gui_setup
@@ -615,6 +616,7 @@ function gui_setup() {
                       sudo chmod -R +x /home/pi/RetroPie
                       sudo chmod -R +x /opt/
                       sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+                    fi
                   else
                       if [[ -f $home/.config/autostart/masos.desktop ]]; then
                         cd
