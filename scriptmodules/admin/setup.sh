@@ -584,8 +584,7 @@ function gui_setup() {
                   sudo chmod -R +x /opt/
                   sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
                 fi
-              else
-                  if [[ -f $home/.config/autostart/masos.desktop ]]; then
+                if [[ -f $home/.config/autostart/masos.desktop ]]; then
                     cd
                     sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
                     sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
@@ -593,7 +592,7 @@ function gui_setup() {
                     sudo chmod -R +x ~/RetroPie
                     sudo chmod -R +x /opt/
                     sudo chown -R $user:$user ~/MasOS
-                  fi
+                fi
                   # FIN DEL AÑADIDO
                 ;;
             P)
@@ -617,8 +616,7 @@ function gui_setup() {
                       sudo chmod -R +x /opt/
                       sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
                     fi
-                  else
-                      if [[ -f $home/.config/autostart/masos.desktop ]]; then
+                  if [[ -f $home/.config/autostart/masos.desktop ]]; then
                         cd
                         sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
                         sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
@@ -626,7 +624,7 @@ function gui_setup() {
                         sudo chmod -R +x ~/RetroPie
                         sudo chmod -R +x /opt/
                         sudo chown -R $user:$user ~/MasOS
-                      fi
+                  fi
                       # FIN DEL AÑADIDO
 
                     exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
