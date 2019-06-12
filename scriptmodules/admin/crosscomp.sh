@@ -11,7 +11,7 @@
 
 rp_module_id="crosscomp"
 rp_module_desc="Create am arm cross compiler env - based on examples from http://preshing.com/20141119/how-to-build-a-gcc-cross-compiler"
-rp_module_help="Can be used via distcc to build MasOS binaries"
+rp_module_help="Can be used via distcc to build RetroPie binaries"
 rp_module_section=""
 rp_module_flags="!arm"
 
@@ -115,7 +115,7 @@ function build_crosscomp() {
     printHeading "Building gcc"
     mkdir -p build-gcc
     cd build-gcc
-    ../gcc/configure --prefix="$dest" --target="$target" --enable-languages=c,c++ --disable-multilib --disable-werror "${params[@]}"
+    ../gcc/configure --prefix="$dest" --target="$target" --enable-languages=c,c++ --disable-multilib --disable-werror "${params[@]}" 
     make all-gcc
     make install-gcc
     cd ..
@@ -158,7 +158,7 @@ function build_crosscomp() {
 function setup_crosscomp() {
     local dist="$1"
     [[ -z "$dist" ]] && dist="$(_default_dist_crosscomp)"
-
+    
     if rp_callModule crosscomp sources "$dist"; then
         rp_callModule crosscomp build "$dist"
         rp_callModule crosscomp switch_distcc "$dist"

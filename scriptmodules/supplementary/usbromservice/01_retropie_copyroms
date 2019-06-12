@@ -1,11 +1,11 @@
 #!/bin/bash
-# This file is part of The RetroPie Project
-#
-# The RetroPie Project is the legal property of its developers, whose names are
+# This file is part of The MasOS Project
+# 
+# The MasOS Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-#
-# See the LICENSE.md file at the top-level directory of this distribution and
-# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+# 
+# See the LICENSE.md file at the top-level directory of this distribution and 
+# at https://github.com/DOCK-PI3/MasOS-Setup/blob/master/LICENSE.md
 #
 
 ## config / defaults
@@ -21,7 +21,7 @@ usb_path_to_rp="$usb_path/configs/to_masos"
 
 declare -A path_mapping
 
-# mapping from usb_path_to_rp/* to masos location
+# mapping from usb_path_to_rp/* to retropie location
 path_mapping["configs"]="$rootdir/configs"
 
 ## internals

@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-# This file is part of The RetroPie Project
+# This file is part of The MasOS Project
 #
-# The RetroPie Project is the legal property of its developers, whose names are
+# The MasOS Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
-# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+# at https://raw.githubusercontent.com/DOCK-PI3/MasOS-Setup/master/LICENSE.md
 #
 
 rp_module_id="esthemes"
-rp_module_desc="Install themes for Emulation Station"
+rp_module_desc="Instalar MasOS themes para EmulationStation"
 rp_module_section="config"
 
 function depends_esthemes() {
@@ -33,6 +33,7 @@ function install_theme_esthemes() {
     fi
     mkdir -p "/etc/emulationstation/themes"
     gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
+	sudo chown -R pi:pi /etc/emulationstation/themes/*
 }
 
 function uninstall_theme_esthemes() {
@@ -44,7 +45,7 @@ function uninstall_theme_esthemes() {
 
 function gui_esthemes() {
     local themes=(
-        'DOCK-PI3 BASE-DEV'
+		'DOCK-PI3 BASE-DEV'
 		'DOCK-PI3 BIGGRID'
 		'DOCK-PI3 bluepixel'
 		'DOCK-PI3 paralleluniverse'
@@ -89,7 +90,7 @@ function gui_esthemes() {
 		'RetroHursty69 comiccrazy'
 	    'RetroHursty69 greenilicious'
 		'waweedman pii-wii'
-    )
+	)
     while true; do
         local theme
         local installed_themes=()
@@ -101,13 +102,13 @@ function gui_esthemes() {
         local gallerydir="/etc/emulationstation/es-theme-gallery"
         if [[ -d "$gallerydir" ]]; then
             status+=("i")
-            options+=(G "View or Update Theme Gallery")
+            options+=(G "Ver o actualizar Theme Gallery")
         else
             status+=("n")
-            options+=(G "Download Theme Gallery")
+            options+=(G "Descargar Theme Gallery")
         fi
 
-        options+=(U "Update all installed themes")
+        options+=(U "Actualizar todos los themes instalados")
 
         local i=1
         for theme in "${themes[@]}"; do
@@ -116,22 +117,22 @@ function gui_esthemes() {
             theme="${theme[1]}"
             if [[ -d "/etc/emulationstation/themes/$theme" ]]; then
                 status+=("i")
-                options+=("$i" "Update or Uninstall $repo/$theme (installed)")
+                options+=("$i" "Actualizar o desinstalar $repo/$theme (instalado)")
                 installed_themes+=("$theme $repo")
             else
                 status+=("n")
-                options+=("$i" "Install $repo/$theme")
+                options+=("$i" "Instalar $repo/$theme (no instalado)")
             fi
             ((i++))
         done
-        local cmd=(dialog --default-item "$default" --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --default-item "$default" --backtitle "$__backtitle" --menu "Elija una opcion" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         default="$choice"
         [[ -z "$choice" ]] && break
         case "$choice" in
             G)
                 if [[ "${status[0]}" == "i" ]]; then
-                    options=(1 "View Theme Gallery" 2 "Update Theme Gallery" 3 "Remove Theme Gallery")
+                    options=(1 "Ver Theme Gallery" 2 "Actualizar Theme Gallery" 3 "Eliminar Theme Gallery")
                     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for gallery" 12 40 06)
                     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
                     case "$choice" in
@@ -168,7 +169,7 @@ function gui_esthemes() {
                 theme="${theme[1]}"
                 if [[ "${status[choice]}" == "i" ]]; then
                     options=(1 "Update $repo/$theme" 2 "Uninstall $repo/$theme")
-                    cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for theme" 12 40 06)
+                    cmd=(dialog --backtitle "$__backtitle" --menu "Elija una opcion para el theme" 12 40 06)
                     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
                     case "$choice" in
                         1)

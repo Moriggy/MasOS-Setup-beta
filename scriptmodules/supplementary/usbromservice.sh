@@ -11,14 +11,13 @@
 
 rp_module_id="usbromservice"
 rp_module_desc="USB ROM Service"
-rp_module_section="opt"
+rp_module_section="main"
 
 function _get_ver_usbromservice() {
     echo 0.0.24
 }
 
 function _update_hook_usbromservice() {
-    ! rp_isInstalled "$md_idx" && return
     [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
 }
 
@@ -27,11 +26,12 @@ function depends_usbromservice() {
     if ! hasPackage usbmount $(_get_ver_usbromservice); then
         depends+=(debhelper devscripts pmount lockfile-progs)
         getDepends "${depends[@]}"
-        gitPullOrClone "$md_build/usbmount" https://github.com/RetroPie/usbmount.git systemd
-        cd "$md_build/usbmount"
+        gitPullOrClone "$md_build" https://github.com/RetroPie/usbmount.git systemd
+        cd "$md_build"
         dpkg-buildpackage
         dpkg -i ../usbmount_*_all.deb
         rm -f ../usbmount_*
+        rm -rf "$md_build"
     fi
 }
 
@@ -62,7 +62,7 @@ function disable_usbromservice() {
         file="/etc/usbmount/mount.d/${file##*/}"
         rm -f "$file"
     done
-    [[ -d "$md_inst" ]] && touch "$md_inst/disabled"
+    touch "$md_inst/disabled"
 }
 
 function remove_usbromservice() {

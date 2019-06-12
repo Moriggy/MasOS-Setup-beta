@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # This file is part of The RetroPie Project
 #
 # The RetroPie Project is the legal property of its developers, whose names are
@@ -44,7 +43,6 @@ function printHeading() {
 function fatalError() {
     printHeading "Error"
     echo -e "$1"
-    joy2keyStop
     exit 1
 }
 
@@ -199,13 +197,9 @@ function getDepends() {
     # check whether to use our own sdl2 - can be disabled to resolve issues with
     # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
     local own_sdl2=1
-    # default to off for x11 targets due to issues with dependencies with recent
-    # Ubuntu (19.04). eg libavdevice58 requiring exactly 2.0.9 sdl2.
-    isPlatform "x11" && own_sdl2=0
     iniConfig " = " '"' "$configdir/all/retropie.cfg"
     iniGet "own_sdl2"
-    [[ "$ini_value" == 1 ]] && own_sdl2=1
-    [[ "$ini_value" == 0 ]] && own_sdl2=0
+[[ "$ini_value" == "0" ]] && own_sdl2=0
 
     for required in $@; do
 
@@ -824,7 +818,6 @@ function setESSystem() {
         "$function" "$@"
     done
 }
-
 ## @fn ensureSystemretroconfig()
 ## @param system system to create retroarch.cfg for
 ## @param shader set a default shader to use (deprecated)
@@ -832,32 +825,25 @@ function setESSystem() {
 function ensureSystemretroconfig() {
     local system="$1"
     local shader="$2"
-
     if [[ ! -d "$configdir/$system" ]]; then
         mkUserDir "$configdir/$system"
     fi
-
     local config="$(mktemp)"
     # add the initial comment regarding include order
     echo -e "# Settings made here will only override settings in the global retroarch.cfg if placed above the #include line\n" >"$config"
-
     # add the per system default settings
     iniConfig " = " '"' "$config"
     iniSet "input_remapping_directory" "$configdir/$system/"
-
     if [[ -n "$shader" ]]; then
         iniUnset "video_smooth" "false"
         iniSet "video_shader" "$emudir/retroarch/shader/$shader"
         iniUnset "video_shader_enable" "true"
     fi
-
     # include the main retroarch config
     echo -e "\n#include \"$configdir/all/retroarch.cfg\"" >>"$config"
-
     copyDefaultConfig "$config" "$configdir/$system/retroarch.cfg"
     rm "$config"
 }
-
 ## @fn setRetroArchCoreOption()
 ## @param option option to set
 ## @param value value to set
@@ -872,7 +858,6 @@ function setRetroArchCoreOption() {
     fi
     chown $user:$user "$configdir/all/retroarch-core-options.cfg"
 }
-
 ## @fn setConfigRoot()
 ## @param dir directory under $configdir to use
 ## @brief Sets module config root `$md_conf_root` to subfolder from `$configdir`
@@ -884,7 +869,6 @@ function setConfigRoot() {
     [[ -n "$dir" ]] && md_conf_root+="/$dir"
     mkUserDir "$md_conf_root"
 }
-
 ## @fn loadModuleConfig()
 ## @param params space separated list of key=value parameters
 ## @brief Load the settings for a module.
@@ -908,7 +892,6 @@ function loadModuleConfig() {
     local option
     local key
     local value
-
     for option in "${options[@]}"; do
         option=(${option/=/ })
         key="${option[0]}"
@@ -922,7 +905,6 @@ function loadModuleConfig() {
         fi
     done
 }
-
 ## @fn applyPatch()
 ## @param patch filename of patch to apply
 ## @brief Apply a patch if it has not already been applied to current folder.
@@ -932,7 +914,6 @@ function loadModuleConfig() {
 function applyPatch() {
     local patch="$1"
     local patch_applied="${patch##*/}.applied"
-
     if [[ ! -f "$patch_applied" ]]; then
         if patch -f -p1 <"$patch"; then
             touch "$patch_applied"
@@ -944,7 +925,6 @@ function applyPatch() {
     fi
     return 0
 }
-
 ## @fn downloadAndExtract()
 ## @param url url of archive
 ## @param dest destination folder for the archive
@@ -957,11 +937,9 @@ function downloadAndExtract() {
     local dest="$2"
     shift 2
     local opts=("$@")
-
     local ext="${url##*.}"
     local cmd=(tar -xv)
     local is_tar=1
-
     local ret
     case "$ext" in
         gz|tgz)
@@ -982,18 +960,14 @@ function downloadAndExtract() {
             rm -rf "$tmp"
             ret=$?
     esac
-
     if [[ "$is_tar" -eq 1 ]]; then
         mkdir -p "$dest"
         cmd+=(-C "$dest" "${opts[@]}")
-
         runCmd "${cmd[@]}" < <(wget -q -O- "$url")
         ret=$?
     fi
-
     return $ret
 }
-
 ## @fn ensureFBMode()
 ## @param res_x width of mode
 ## @param res_y height of mode
@@ -1009,7 +983,6 @@ function ensureFBMode() {
     local res_y="$2"
     local res="${res_x}x${res_y}"
     sed -i --follow-symlinks "/$res mode/,/endmode/d" /etc/fb.modes
-
     cat >> /etc/fb.modes <<_EOF_
 # added by RetroPie-Setup - $res mode for emulators
 mode "$res"
@@ -1018,7 +991,6 @@ mode "$res"
 endmode
 _EOF_
 }
-
 ## @fn joy2keyStart()
 ## @param left mapping for left
 ## @param right mapping for right
@@ -1035,37 +1007,30 @@ function joy2keyStart() {
     # don't start on SSH sessions
     # (check for bracket in output - ip/name in brackets over a SSH connection)
     [[ "$(who -m)" == *\(* ]] && return
-
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
         params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
     fi
-
     # get the first joystick device (if not already set)
     [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
-
     # if no joystick device, or joy2key is already running exit
     [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
-
     # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
-    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" 2>/dev/null; then
-        __joy2key_pid=$(pgrep -f joy2key.py)
+    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
+        __joy2key_pid=$!
+        sleep 1
         return 0
     fi
-
     return 1
 }
-
 ## @fn joy2keyStop()
 ## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
     if [[ -n $__joy2key_pid ]]; then
-        kill $__joy2key_pid 2>/dev/null
-        __joy2key_pid=""
+        kill -INT $__joy2key_pid 2>/dev/null
         sleep 1
     fi
 }
-
 ## @fn getPlatformConfig()
 ## @param key key to look up
 ## @brief gets a config from a platforms.cfg ini
@@ -1085,7 +1050,6 @@ function getPlatformConfig() {
     [[ "$key" == "retropie_fullname" ]] && ini_value="RetroPie"
     echo "$ini_value"
 }
-
 ## @fn addSystem()
 ## @param system system to add
 ## @brief adds an emulator entry / system
@@ -1099,22 +1063,18 @@ function addSystem() {
         addSystem "$3"
         return
     fi
-
     local system="$1"
     local fullname="$2"
     local exts=($3)
-
     local platform="$system"
     local theme="$system"
     local cmd
     local path
-
     # check if we are removing the system
     if [[ "$md_mode" == "remove" ]]; then
         delSystem "$id" "$system"
         return
     fi
-
     # set system / platform / theme for configuration based on data in names field
     if [[ "$system" == "ports" ]]; then
         cmd="bash %ROM%"
@@ -1123,9 +1083,7 @@ function addSystem() {
         cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
         path="$romdir/$system"
     fi
-
     exts+=("$(getPlatformConfig "${system}_exts")")
-
     local temp
     temp="$(getPlatformConfig "${system}_theme")"
     if [[ -n "$temp" ]]; then
@@ -1133,24 +1091,19 @@ function addSystem() {
     else
         theme="$system"
     fi
-
     temp="$(getPlatformConfig "${system}_platform")"
     if [[ -n "$temp" ]]; then
         platform="$temp"
     else
         platform="$system"
     fi
-
     temp="$(getPlatformConfig "${system}_fullname")"
     [[ -n "$temp" ]] && fullname="$temp"
-
     exts="${exts[*]}"
     # add the extensions again as uppercase
     exts+=" ${exts^^}"
-
     setESSystem "$fullname" "$system" "$path" "$exts" "$cmd" "$platform" "$theme"
 }
-
 ## @fn delSystem()
 ## @param system system to delete
 ## @brief Deletes a system
@@ -1158,13 +1111,11 @@ function addSystem() {
 function delSystem() {
     local system="$1"
     local fullname="$(getPlatformConfig "${system}_fullname")"
-
     local function
     for function in $(compgen -A function _del_system_); do
         "$function" "$fullname" "$system"
     done
 }
-
 ## @fn addPort()
 ## @param id id of the module / command
 ## @param port name of the port
@@ -1188,12 +1139,10 @@ function addPort() {
     local file="$romdir/ports/$3.sh"
     local cmd="$4"
     local game="$5"
-
     # move configurations from old ports location
     if [[ -d "$configdir/$port" ]]; then
         mv "$configdir/$port" "$md_conf_root/"
     fi
-
     # remove the ports launch script if in remove mode
     if [[ "$md_mode" == "remove" ]]; then
         rm -f "$file"
@@ -1204,21 +1153,16 @@ function addPort() {
         fi
         return
     fi
-
     mkUserDir "$romdir/ports"
-
     cat >"$file" << _EOF_
 #!/bin/bash
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ "$port" "$game"
 _EOF_
-
     chown $user:$user "$file"
     chmod +x "$file"
-
     [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
     addSystem "ports"
 }
-
 ## @fn addEmulator()
 ## @param default 1 to make the emulator / command default for the system if no default already set
 ## @param id unique id of the module / command
@@ -1249,21 +1193,17 @@ function addEmulator() {
     local id="$2"
     local system="$3"
     local cmd="$4"
-
     # check if we are removing the system
     if [[ "$md_mode" == "remove" ]]; then
         delEmulator "$id" "$system"
         return
     fi
-
     # automatically add parameters for libretro modules
     if [[ "$id" == lr-* && "$cmd" =~ ^"$md_inst"[^[:space:]]*\.so ]]; then
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
     fi
-
     # create a config folder for the system / port
     mkUserDir "$md_conf_root/$system"
-
     # add the emulator to the $conf_dir/emulators.cfg if a commandline exists (not used for some ports)
     if [[ -n "$cmd" ]]; then
         iniConfig " = " '"' "$md_conf_root/$system/emulators.cfg"
@@ -1276,7 +1216,6 @@ function addEmulator() {
         chown $user:$user "$md_conf_root/$system/emulators.cfg"
     fi
 }
-
 ## @fn delEmulator()
 ## @param id id of emulator to delete
 ## @param system system to delete from
@@ -1287,7 +1226,6 @@ function addEmulator() {
 function delEmulator() {
     local id="$1"
     local system="$2"
-
     local config="$md_conf_root/$system/emulators.cfg"
     # remove from apps list for system
     if [[ -f "$config" && -n "$id" ]]; then
@@ -1300,7 +1238,6 @@ function delEmulator() {
         # if we no longer have any entries in the emulators.cfg file we can remove it
         grep -q "=" "$config" || rm -f "$config"
     fi
-
     # if we don't have an emulators.cfg we can remove the system from the frontends
     if [[ ! -f "$md_conf_root/$system/emulators.cfg" ]]; then
         local function
@@ -1309,17 +1246,14 @@ function delEmulator() {
         done
     fi
 }
-
 ## @fn patchVendorGraphics()
 ## @param filename file to patch
 ## @details replace declared dependencies of old vendor graphics libraries with new names
 ## Temporary compatibility workaround for legacy software to work on new Raspberry Pi firmwares.
 function patchVendorGraphics() {
     local filename="$1"
-
     # patchelf is not available on Raspbian Jessie
     compareVersions "$__os_debian_ver" lt 9 && return
-
     getDepends patchelf
     printMsgs "console" "Applying vendor graphics patch: $filename"
     patchelf --replace-needed libEGL.so libbrcmEGL.so \
@@ -1329,7 +1263,6 @@ function patchVendorGraphics() {
              --replace-needed libOpenVG.so libbrcmOpenVG.so \
              --replace-needed libWFC.so libbrcmWFC.so "$filename"
 }
-
 ## @fn dkmsManager()
 ## @param mode dkms operation type
 ## @module_name name of dkms module
@@ -1341,7 +1274,6 @@ function dkmsManager() {
     local module_ver="$3"
     local kernel="$(uname -r)"
     local ver
-
     case "$mode" in
         install)
             if dkms status | grep -q "^$module_name"; then
@@ -1374,26 +1306,4 @@ function dkmsManager() {
             fi
             ;;
     esac
-}
-
-## @fn getIPAddress()
-## @param dev optional specific network device to use for address lookup
-## @brief Obtains the current externally routable source IP address of the machine
-## @details This function first tries to obtain an external IPv4 route and
-## otherwise tries an IPv6 route if the IPv4 route can not be determined.
-## If no external route can be determined, nothing will be returned.
-## This function uses Google's DNS servers as the external lookup address.
-function getIPAddress() {
-    local dev="$1"
-    local ip_route
-
-    # first try to obtain an external IPv4 route
-    ip_route=$(ip -4 route get 8.8.8.8 ${dev:+dev $dev} 2>/dev/null)
-    if [[ -z "$ip_route" ]]; then
-        # if there is no IPv4 route, try to obtain an IPv6 route instead
-        ip_route=$(ip -6 route get 2001:4860:4860::8888 ${dev:+dev $dev} 2>/dev/null)
-    fi
-
-    # if an external route was found, report its source address
-    [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
 }

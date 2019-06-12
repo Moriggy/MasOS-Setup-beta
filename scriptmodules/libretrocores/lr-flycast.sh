@@ -17,8 +17,7 @@ rp_module_section="exp"
 rp_module_flags="!mali !armv6"
 
 function _update_hook_lr-flycast() {
-    renameModule "lr-reicast" "lr-beetle-dc"
-    renameModule "lr-beetle-dc" "lr-flycast"
+    renameModule "lr-reicast" "lr-flycast"
 }
 
 function sources_lr-flycast() {

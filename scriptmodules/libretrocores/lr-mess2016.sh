@@ -17,13 +17,10 @@ rp_module_section="exp"
 
 function sources_lr-mess2016() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2016-libretro.git
-    # disable bgfx (fails on neon with recent GCC due to outdated SIMD instrinsics)
-    # see https://github.com/libretro/mame2016-libretro/pull/25
-    applyPatch "$scriptdir/scriptmodules/$md_type/lr-mame2016/01_disable_bgfx.diff"
 }
 
 function build_lr-mess2016() {
-    rpSwap on 1200
+    rpSwap on 2000
     local params=($(_get_params_lr-mame) SUBTARGET=mess)
     make clean
     make "${params[@]}"

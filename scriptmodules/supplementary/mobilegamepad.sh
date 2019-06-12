@@ -10,10 +10,10 @@
 #
 
 rp_module_id="mobilegamepad"
-rp_module_desc="Mobile Universal Gamepad for MasOS"
+rp_module_desc="Mobile Universal Gamepad para MasOS"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/sbidolach/mobile-gamepad/master/LICENSE"
 rp_module_section="exp"
-rp_module_flags="noinstclean nobin"
+rp_module_flags="noinstclean"
 
 function depends_mobilegamepad() {
     depends_virtualgamepad "$@"

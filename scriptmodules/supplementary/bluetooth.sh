@@ -355,11 +355,9 @@ function connect_mode_bluetooth() {
             cat > "$config" << _EOF_
 [Unit]
 Description=Connect Bluetooth
-
 [Service]
 Type=$type
 ExecStart=/bin/bash "$scriptdir/masos_pkgs.sh" bluetooth boot
-
 [Install]
 WantedBy=multi-user.target
 _EOF_

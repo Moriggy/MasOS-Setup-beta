@@ -109,13 +109,10 @@ function configure_wolf4sdl() {
         game_data_wolf4sdl
         cat > "$md_inst/bin/wolf4sdl.sh" << _EOF_
 #!/bin/bash
-
 function get_md5sum() {
     local file="\$1"
-
     [[ -n "\$file" ]] && md5sum "\$file" 2>/dev/null | cut -d" " -f1
 }
-
 function launch_wolf4sdl() {
     local wad_file="\$1"
     declare -A game_checksums=(
@@ -133,7 +130,6 @@ function launch_wolf4sdl() {
             echo "Error: \$wad_file (md5: \$(get_md5sum \$wad_file)) is not a supported version"
         fi
 }
-
 launch_wolf4sdl "\$1"
 _EOF_
         chmod +x "$md_inst/bin/wolf4sdl.sh"

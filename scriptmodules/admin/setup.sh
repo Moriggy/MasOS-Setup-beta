@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# This file is part of The RetroPie Project
+# This file is part of The MasOS Project
 #
-# The RetroPie Project is the legal property of its developers, whose names are
+# The MasOS Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
@@ -10,7 +10,7 @@
 #
 
 rp_module_id="setup"
-rp_module_desc="GUI based setup for MasOS"
+rp_module_desc="GUI instalador base para MasOS"
 rp_module_section=""
 
 function _setup_gzip_log() {
@@ -22,7 +22,7 @@ function rps_logInit() {
         if mkdir -p "$__logdir"; then
             chown $user:$user "$__logdir"
         else
-            fatalError "Couldn't make directory $__logdir"
+            fatalError "No se pudo crear el directorio $__logdir"
         fi
     fi
     local now=$(date +'%Y-%m-%d_%H%M%S')
@@ -33,27 +33,27 @@ function rps_logInit() {
 }
 
 function rps_logStart() {
-    echo -e "Log started at: $(date -d @$time_start)\n"
-    echo "MasOS-Setup version: $__version ($(git -C "$scriptdir" log -1 --pretty=format:%h))"
+    echo -e "Iniciar sesion el: $(date -d @$time_start)\n"
+    echo "MasOS version: $__version ($(git -C "$scriptdir" log -1 --pretty=format:%h))"
     echo "System: $(uname -a)"
 }
 
 function rps_logEnd() {
     time_end=$(date +"%s")
     echo
-    echo "Log ended at: $(date -d @$time_end)"
+    echo "El registro termino en: $(date -d @$time_end)"
     date_total=$((time_end-time_start))
     local hours=$((date_total / 60 / 60 % 24))
     local mins=$((date_total / 60 % 60))
     local secs=$((date_total % 60))
-    echo "Total running time: $hours hours, $mins mins, $secs secs"
+    echo "Tiempo de ejecucion: $hours horas, $mins minutos, $secs segundos"
 }
 
 function rps_printInfo() {
     reset
     if [[ ${#__ERRMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__ERRMSGS[@]}"
-        printMsgs "dialog" "Please see $1 for more in depth information regarding the errors."
+        printMsgs "dialog" "Consulte $1 para obtener más informacion detallada sobre los errores."
     fi
     if [[ ${#__INFMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__INFMSGS[@]}"
@@ -69,12 +69,8 @@ function depends_setup() {
     fi
 
     if isPlatform "rpi" && isPlatform "mesa"; then
-        printMsgs "dialog" "ERROR: You have the experimental desktop GL driver enabled. This is NOT compatible with MasOS, and Emulation Station as well as emulators will fail to launch.\n\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
+        printMsgs "dialog" "ERROR: Tiene habilitado el controlador experimental GL de escritorio. Esto NO es compatible con MasOS, Emulation Station y los emuladores no se ejecutaran.\n\nDeshabilite el controlador experimental GL de escritorio desde el menu 'Opciones avanzadas' de raspi-config."
         exit 1
-    fi
-
-    if [[ "$__os_debian_ver" -eq 8 ]]; then
-        printMsgs "dialog" "Raspbian/Debian Jessie and versions of Ubuntu below 18.04 are no longer supported.\n\nPlease install MasOS 1.0 or newer from a fresh image which is based on Raspbian Stretch (or if running Ubuntu, upgrade your OS)."
     fi
 
     # make sure user has the correct group permissions
@@ -82,7 +78,7 @@ function depends_setup() {
         local group
         for group in input video; do
             if ! hasFlag "$(groups $user)" "$group"; then
-                dialog --yesno "Your user '$user' is not a member of the system group '$group'.\n\nThis is needed for MasOS to function correctly. May I add '$user' to group '$group'?\n\nYou will need to restart for these changes to take effect." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$user"
+                dialog --yesno "Su usuario '$usuario' no es miembro del grupo de sistemas '$group'. \n\n Es necesario para que MasOS funcione correctamente. ¿Puedo agregar '$usuario' al grupo '$group'?\n\nTendra que reiniciar para que estos cambios surtan efecto." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$user"
             fi
         done
     fi
@@ -95,22 +91,43 @@ function updatescript_setup()
 {
     clear
     chown -R $user:$user "$scriptdir"
-    printHeading "Fetching latest version of the MasOS Setup Script."
+    printHeading "Obteniendo la ultima version en la secuencia de comandos de configuracion de MasOS-Setup."
     pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then
-        printMsgs "dialog" "Cannot find directory '.git'. Please clone the MasOS Setup script via 'git clone https://github.com/RetroPie/RetroPie-Setup.git'"
+        printMsgs "dialog" "No se puede encontrar el directorio '.git'. Por favor, clona el script de configuracion de MasOS a traves de 'git clone https://github.com/DOCK-PI3/MasOS-Setup.git'"
         popd >/dev/null
         return 1
     fi
     local error
     if ! error=$(su $user -c "git pull 2>&1 >/dev/null"); then
-        printMsgs "dialog" "Update failed:\n\n$error"
+        printMsgs "dialog" "Actualización fallida:\n\n$error"
         popd >/dev/null
         return 1
     fi
     popd >/dev/null
 
-    printMsgs "dialog" "Fetched the latest version of the MasOS Setup script."
+    # Añadido para copiar los archivos del menu opciones
+    if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
+      cd
+      sudo cp /home/pi/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/scripts /home/pi/RetroPie/
+      sudo chmod -R +x /home/pi/RetroPie
+      sudo chmod -R +x /opt/
+      sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+  else
+      if [[ -f $home/.config/autostart/masos.desktop ]]; then
+        cd
+        sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+        sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+        sudo cp -R ~/MasOS-Setup/scriptmodules/extras/scripts ~/RetroPie/
+        sudo chmod -R +x ~/RetroPie
+        sudo chmod -R +x /opt/
+        sudo chown -R $user:$user ~/MasOS
+      fi
+      # FIN DEL AÑADIDO
+
+    printMsgs "dialog" "Ya tiene la ultima version del script de configuracion de MasOS."
     return 0
 }
 
@@ -128,14 +145,14 @@ function post_update_setup() {
     rps_logInit
     {
         rps_logStart
-        # run _update_hook_id functions - eg to fix up modules for masos-setup 4.x install detection
-        printHeading "Running post update hooks"
+        # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
+        printHeading "Ejecucion de ganchos de actualizacion"
         rp_updateHooks
         rps_logEnd
     } &> >(_setup_gzip_log "$logfilename")
     rps_printInfo "$logfilename"
 
-    printMsgs "dialog" "NOTICE: The MasOS-Setup script and pre-made MasOS SD card images are available to download for free from https://masos.dx.am.\n\nThe pre-built MasOS image includes software that has non commercial licences. Selling MasOS images or including MasOS with your commercial product is not allowed.\n\nNo copyrighted games are included with MasOS.\n\nIf you have been sold this software, you can let us know about it by emailing masosteam@gmail.com."
+    printMsgs "dialog" "AVISO: la secuencia de comandos de configuracion de MasOS y las imagenes de la tarjeta SD de MasOS prefabricadas estan disponibles para descargar de forma gratuita desde http://masos.dx.am/ .\n\nLa imagen de MasOS preconstruida incluye software que tiene licencias no comerciales. No esta permitido vender imagenes de MasOS ni incluir MasOS con su producto comercial. \n\nNo se incluyen juegos con derechos de autor en MasOS.\n\nSi le vendieron este software, puede informarnos al respecto enviando un correo electronico a masosgroup@gmail.com ."
 
     # return to set return function
     "${return_func[@]}"
@@ -151,38 +168,38 @@ function package_setup() {
         local install
         local status
         if rp_isInstalled "$idx"; then
-            install="Update"
-            status="Installed"
+            install="Actualizar"
+            status="Instalado"
         else
-            install="Install"
-            status="Not installed"
+            install="Instalar"
+            status="No Instalado"
         fi
 
         if rp_hasBinary "$idx"; then
-            options+=(B "$install from binary")
+            options+=(B "$install de binario")
         fi
 
         if fnExists "sources_${md_id}"; then
-            options+=(S "$install from source")
+            options+=(S "$install de la fuente")
         fi
 
         if rp_isInstalled "$idx"; then
             if fnExists "gui_${md_id}"; then
-                options+=(C "Configuration / Options")
+                options+=(C "Configuracion / Opciones")
             fi
-            options+=(X "Remove")
+            options+=(X "Eliminar")
         fi
 
         if [[ -d "$__builddir/$md_id" ]]; then
-            options+=(Z "Clean source folder")
+            options+=(Z "Limpiar carpeta de origen")
         fi
 
         local help="${__mod_desc[$idx]}\n\n${__mod_help[$idx]}"
         if [[ -n "$help" ]]; then
-            options+=(H "Package Help")
+            options+=(H "Paquete de ayuda")
         fi
 
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]} ($status)" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Escoge una opcion para ${__mod_id[$idx]} ($status)" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         local logfilename
@@ -221,8 +238,8 @@ function package_setup() {
                 rps_printInfo "$logfilename"
                 ;;
             X)
-                local text="Are you sure you want to remove $md_id?"
-                [[ "${__mod_section[$idx]}" == "core" ]] && text+="\n\nWARNING - core packages are needed for MasOS to function!"
+                local text="Estas seguro de que desea eliminar $md_id?"
+                [[ "${__mod_section[$idx]}" == "core" ]] && text+="\n\n ADVERTENCIA: ¡se necesitan paquetes del core -nucleo- para que funcione MasOS!"
                 dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
@@ -237,7 +254,7 @@ function package_setup() {
                 ;;
             Z)
                 rp_callModule "$idx" clean
-                printMsgs "dialog" "$__builddir/$md_id has been removed."
+                printMsgs "dialog" "$__builddir/$md_id ha sido eliminada."
                 ;;
             *)
                 break
@@ -256,25 +273,25 @@ function section_gui_setup() {
 
         # we don't build binaries for experimental packages
         if rp_hasBinaries && [[ "$section" != "exp" ]]; then
-            options+=(B "Install/Update all ${__sections[$section]} packages from binary" "This will install all ${__sections[$section]} packages from binary archives (if available). If a binary archive is missing a source install will be performed.")
+            options+=(B "Instalar / Actualizar todos ${__sections[$section]} los paquetes de binario" "Esto instalara todos los paquetes ${__sections[$section]} de archivos binarios (si estan disponibles). Si falta un archivo binario, se realizara una instalacion desde la fuente.")
         fi
 
         options+=(
-            S "Install/Update all ${__sections[$section]} packages from source" "S This will build and install all the packages from $section from source. Building from source will pull in the very latest releases of many of the emulators. Building could fail or resulting binaries could not work. Only choose this option if you are comfortable in working with the linux console and debugging any issues."
-            X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
+            S "Instalar / Actualizar todos los paquetes ${__sections[$section]} desde la fuente -source" "S Esto construira e instalara todos los paquetes de $section desde source.La construccion desde la fuente instalara las ultimas versiones de muchos de los emuladores. La instalacion podria fallar o los binarios resultantes podrian no funcionar. Solo elija esta opcion si se siente comodo trabajando con la consola de Linux y depurando cualquier problema."
+            X "Eliminar todos los paquetes ${__sections[$section]} " "X Esto eliminara todos los paquetes de $section."
         )
 
         local idx
         for idx in $(rp_getSectionIds $section); do
             if rp_isInstalled "$idx"; then
-                installed="(Installed)"
+                installed="(Instalado)"
             else
                 installed=""
             fi
             options+=("$idx" "${__mod_id[$idx]} $installed" "$idx ${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
         done
 
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Escoge una opcion" 22 76 16)
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
@@ -296,7 +313,7 @@ function section_gui_setup() {
         __INFMSGS=()
         case "$choice" in
             B)
-                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from binary?" 22 76 2>&1 >/dev/tty || continue
+                dialog --defaultno --yesno "¿Seguro que quieres instalar / actualizar todos los paquetes de $section desde binario?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
@@ -308,7 +325,7 @@ function section_gui_setup() {
                 rps_printInfo "$logfilename"
                 ;;
             S)
-                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from source?" 22 76 2>&1 >/dev/tty || continue
+                dialog --defaultno --yesno "¿Estas seguro de que deseas instalar / actualizar todos los paquetes de $section desde la fuente?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
@@ -322,8 +339,8 @@ function section_gui_setup() {
                 ;;
 
             X)
-                local text="Are you sure you want to remove all $section packages?"
-                [[ "$section" == "core" ]] && text+="\n\nWARNING - core packages are needed for MasOS to function!"
+                local text="¿Seguro que quieres eliminar todos los paquetes de $section?"
+                [[ "$section" == "core" ]] && text+="\n\nWARNING - core ¡se necesitan estos paquetes para que MasOS funcione!"
                 dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
@@ -355,7 +372,7 @@ function config_gui_setup() {
             fi
         done
 
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Escoge una opcion" 22 76 16)
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
@@ -402,8 +419,8 @@ function update_packages_setup() {
 
 function update_packages_gui_setup() {
     local update="$1"
-    if [[ "$update" != "update" ]]; then
-        dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
+    if [[ "$update" != "actualizar" ]]; then
+        dialog --defaultno --yesno "¿Seguro que quieres actualizar los paquetes instalados?" 22 76 2>&1 >/dev/tty || return 1
         updatescript_setup
         # restart at post_update and then call "update_packages_gui_setup update" afterwards
         joy2keyStop
@@ -411,7 +428,7 @@ function update_packages_gui_setup() {
     fi
 
     local update_os=0
-    dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && update_os=1
+    dialog --yesno "¿Desea actualizar los paquetes subyacentes del sistema operativo? (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && update_os=1
 
     clear
 
@@ -427,14 +444,14 @@ function update_packages_gui_setup() {
     } &> >(_setup_gzip_log "$logfilename")
 
     rps_printInfo "$logfilename"
-    printMsgs "dialog" "Installed packages have been updated."
+    printMsgs "dialog" "Los paquetes instalados se han actualizado."
     gui_setup
 }
 
 function basic_install_setup() {
     local idx
     for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-        rp_installModule "$idx"
+		rp_installModule "$idx"
     done
 }
 
@@ -444,12 +461,12 @@ function packages_gui_setup() {
     local options=()
 
     for section in core main opt driver exp; do
-        options+=($section "Manage ${__sections[$section]} packages" "$section Choose top install/update/configure packages from the ${__sections[$section]}")
+        options+=($section "Administrar ${__sections[$section]} paquetes" "$section Elija la parte superior instalar/actualizar/configurar paquetes de la ${__sections[$section]}")
     done
 
     local cmd
     while true; do
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Escoge una opcion" 22 76 16)
 
         local choice
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -468,23 +485,23 @@ function packages_gui_setup() {
 
 function uninstall_setup()
 {
-    dialog --defaultno --yesno "Are you sure you want to uninstall MasOS?" 22 76 2>&1 >/dev/tty || return 0
-    dialog --defaultno --yesno "Are you REALLY sure you want to uninstall MasOS?\n\n$rootdir will be removed - this includes configuration files for all MasOS components." 22 76 2>&1 >/dev/tty || return 0
+    dialog --defaultno --yesno "¿Seguro que quieres desinstalar MasOS?" 22 76 2>&1 >/dev/tty || return 0
+    dialog --defaultno --yesno "¿Estas REALMENTE seguro de que deseas desinstalar MasOS?\n\n$rootdir se eliminara, esto incluye archivos de configuracion para todos componentes." 22 76 2>&1 >/dev/tty || return 0
     clear
-    printHeading "Uninstalling MasOS"
+    printHeading "Desinstalando MasOS"
     for idx in "${__mod_idx[@]}"; do
         rp_isInstalled "$idx" && rp_callModule $idx remove
     done
     rm -rfv "$rootdir"
-    dialog --defaultno --yesno "Do you want to remove all the files from $datadir - this includes all your installed ROMs, BIOS files and custom splashscreens." 22 76 2>&1 >/dev/tty && rm -rfv "$datadir"
-    if dialog --defaultno --yesno "Do you want to remove all the system packages that MasOS depends on? \n\nWARNING: this will remove packages like SDL even if they were installed before you installed MasOS - it will also remove any package configurations - such as those in /etc/samba for Samba.\n\nIf unsure choose No (selected by default)." 22 76 2>&1 >/dev/tty; then
+    dialog --defaultno --yesno "¿Desea eliminar todos los archivos de $datadir ? Esto incluye todas las ROM instaladas, los archivos de la BIOS y las pantallas personalizadas. " 22 76 2>&1 >/dev/tty && rm -rfv "$datadir"
+    if dialog --defaultno --yesno "¿Desea eliminar todos los paquetes de sistema de los que depende MasOS?\n\nADVERTENCIA: esto eliminara paquetes como SDL incluso si se instalaron antes de instalar MasOS - tambien eliminara cualquier configuracion de paquete - como los de /etc/ samba para Samba. \n\nSi no esta seguro, elija No (seleccionado por defecto)." 22 76 2>&1 >/dev/tty; then
         clear
         # remove all dependencies
         for idx in "${__mod_idx[@]}"; do
             rp_isInstalled "$idx" && rp_callModule "$idx" depends remove
         done
     fi
-    printMsgs "dialog" "MasOS has been uninstalled."
+    printMsgs "dialog" "MasOS fue desistalado."
 }
 
 function reboot_setup()
@@ -493,7 +510,7 @@ function reboot_setup()
     reboot
 }
 
-# masos-setup main menu
+# retropie-setup main menu
 function gui_setup() {
     depends_setup
     joy2keyStart
@@ -503,24 +520,24 @@ function gui_setup() {
 
         cmd=(dialog --backtitle "$__backtitle" --title "MasOS-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version\nLast Commit: $commit" 22 76 16)
         options=(
-            I "Basic install" "I This will install all packages from Core and Main which gives a basic MasOS install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+            I "MasOS Instalacion basica" "Esto instalara todos los paquetes de Core y Main, lo que da una instalacion basica de MasOS.\nPosteriormente, se pueden instalar mas paquetes desde las secciones Opcional y Experimental. Si hay binarios disponibles, se usaran, o los paquetes se construiran desde la fuente, lo que llevara mas tiempo."
 
-            U "Update" "U Updates MasOS-Setup and all currently installed packages. Will also allow to update OS packages. If binaries are available they will be used, otherwise packages will be built from source."
+			      U "Update" "U Actualiza el script MasOS-Setup y todos los paquetes instalados actualmente. También permitira actualizar paquetes de sistema operativo. Si hay binarios disponibles, se usaran; de lo contrario, los paquetes se compilaran a partir de la fuente."
 
-            P "Manage packages"
-            "P Install/Remove and Configure the various components of MasOS, including emulators, ports, and controller drivers."
+            P "Administrar paquetes"
+            "P Instalar / Quitar y configurar los diversos componentes de MasOS, incluidos emuladores, ports y controladores."
 
-            C "Configuration / tools"
-            "C Configuration and Tools. Any packages you have installed that have additional configuration options will also appear here."
+            C "Configuracion / herramientas"
+            "C Configuracion y herramientas. Configure samba y cualquier paquete que haya instalado que tenga opciones de configuracion adicionales tambien aparecera aqui."
 
-            S "Update MasOS-Setup script"
-            "S Update this MasOS-Setup script. This will update this main management script only, but will not update any software packages. To update packages use the 'Update' option from the main menu, which will also update the MasOS-Setup script."
+            S "Actualizar script MasOS-Setup"
+            "S Actualice este script Masos-Setup. Esto actualizará solo este script de administración principal, pero no actualizará ningún paquete de software. Para actualizar los paquetes, use la opción 'Actualizar' del menú principal, que también actualizará el script de instalación de MasOS."
 
-            X "Uninstall MasOS"
-            "X Uninstall MasOS completely."
+            # X "Desinstalar MasOS"
+            # "X Desinstalar completamente MasOS."
 
-            R "Perform reboot"
-            "R Reboot your machine."
+            R "Realice un reinicio"
+            "R Reinicia tu dispositivo, reinicie su maquina para que las modificaciones tengan efecto."
         )
 
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -537,7 +554,7 @@ function gui_setup() {
 
         case "$choice" in
             I)
-                dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
+                dialog --defaultno --yesno "¿Estás seguro de que quieres hacer una instalación básica?\n\nEsto instalará todos los paquetes del 'Core' y 'Main'." 22 76 2>&1 >/dev/tty || continue
                 clear
                 local logfilename
                 __ERRMSGS=()
@@ -545,12 +562,37 @@ function gui_setup() {
                 rps_logInit
                 {
                     rps_logStart
+					          sudo apt-get install -y libboost-all-dev
                     basic_install_setup
-                    rps_logEnd
+              #### gancho nuevo lineas 539-566
+              				sudo cp /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
+              				sudo chmod +x /home/pi/RetroPie/retropiemenu/masosextrasall.sh
+              				sudo cp ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh ~/RetroPie/retropiemenu/
+                              sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
+              			if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
+                			cd
+                			sudo cp /home/pi/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                			sudo cp -R /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+                			sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/scripts /home/pi/RetroPie/
+                			sudo chmod -R +x /home/pi/RetroPie
+                			sudo chmod -R +x /opt/
+                			sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+                  else
+                      if [[ -f $home/.config/autostart/masos.desktop ]]; then
+                    		cd
+                    		sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                    		sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+                    		sudo cp -R ~/MasOS-Setup/scriptmodules/extras/scripts ~/RetroPie/
+                    		sudo chmod -R +x ~/RetroPie
+                    		sudo chmod -R +x /opt/
+                    		sudo chown -R $user:$user ~/MasOS
+                    			fi
+      		fi
+					rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
                 ;;
-            U)
+			      U)
                 update_packages_gui_setup
                 ;;
             P)
@@ -577,8 +619,12 @@ function gui_setup() {
                 rps_printInfo "$logfilename"
                 ;;
             R)
-                dialog --defaultno --yesno "Are you sure you want to reboot?\n\nNote that if you reboot when Emulation Station is running, you will lose any metadata changes." 22 76 2>&1 >/dev/tty || continue
-                reboot_setup
+                dialog --defaultno --yesno "¿Estás seguro de que quieres reiniciar?\n\nTen en cuenta que si reinicias cuando se está ejecutando Emulation Station, perderás los cambios en los metadatos." 22 76 2>&1 >/dev/tty || continue
+				sudo cp /home/pi/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
+				sudo chmod +x /home/pi/RetroPie/retropiemenu/masosextrasall.sh
+				sudo cp ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/masosextrasall.sh ~/RetroPie/retropiemenu/
+                sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
+				reboot_setup
                 ;;
         esac
     done

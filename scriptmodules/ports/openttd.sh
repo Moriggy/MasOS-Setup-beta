@@ -30,7 +30,9 @@ function remove_openttd() {
 
 function configure_openttd() {
     local dir
+    mkUserDir "$home/.local"
     for dir in .config .local/share; do
+        mkUserDir "$home/$dir"
         moveConfigDir "$home/$dir/openttd" "$md_conf_root/openttd"
     done
 

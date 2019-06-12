@@ -10,7 +10,7 @@
 #
 
 rp_module_id="emulationstation"
-rp_module_desc="EmulationStation - Frontend used by MasOS for launching emulators"
+rp_module_desc="EmulationStation - Frontend usado por MasOS y RetroPie para lanzar emuladores"
 rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
 rp_module_section="core"
 rp_module_flags="frontend"
@@ -123,12 +123,12 @@ function _add_rom_emulationstation() {
 
 function depends_emulationstation() {
     local depends=(
-        libfreeimage-dev libfreetype6-dev
+        libboost-system-dev libboost-filesystem-dev
+        libboost-date-time-dev libfreeimage-dev libfreetype6-dev
         libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
         libvlc-dev libvlccore-dev vlc
     )
 
-    compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
     isPlatform "x11" && depends+=(gnome-terminal)
     getDepends "${depends[@]}"
 }
@@ -136,14 +136,8 @@ function depends_emulationstation() {
 function sources_emulationstation() {
     local repo="$1"
     local branch="$2"
-    [[ -z "$repo" ]] && repo="https://github.com/RetroPie/EmulationStation"
-    if [[ -z "$branch" ]]; then
-        if compareVersions "$__os_debian_ver" gt 8; then
-            branch="stable"
-        else
-            branch="v2.7.6"
-        fi
-    fi
+    [[ -z "$repo" ]] && repo="https://github.com/DOCK-PI3/EmulationStation"
+    [[ -z "$branch" ]] && branch="stable"
     gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
@@ -163,7 +157,6 @@ function install_emulationstation() {
         'emulationstation.sh'
         'GAMELISTS.md'
         'README.md'
-        'resources'
         'THEMES.md'
     )
 }
@@ -204,18 +197,18 @@ function install_launch_emulationstation() {
 #!/bin/bash
 
 if [[ \$(id -u) -eq 0 ]]; then
-    echo "emulationstation should not be run as root. If you used 'sudo emulationstation' please run without sudo."
+    echo "emulationstation no debe ejecutarse como root. Si usaste 'sudo emulationstation', ejecutalo sin sudo."
     exit 1
 fi
 
 if [[ -d "/sys/module/vc4" ]]; then
-    echo -e "ERROR: You have the experimental desktop GL driver enabled. This is NOT compatible with MasOS, and Emulation Station as well as emulators will fail to launch.\\n\\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
+    echo -e "ERROR: Tienes el controlador experimental de escritorio GL habilitado. Esto NO es compatible con MasOS, y EmulationStation y los emuladores no podran iniciarse.\\n\\nDeshabilite el controlador GL de escritorio experimental desde el menu 'Opciones avanzadas' de raspi-config."
     exit 1
 fi
 
 if [[ "\$(uname --machine)" != *86* ]]; then
     if [[ -n "\$(pidof X)" ]]; then
-        echo "X is running. Please shut down X in order to mitigate problems with losing keyboard input. For example, logout from LXDE."
+        echo "X se esta ejecutando. Cierre la X para mitigar los problemas de perdida de entrada del teclado. Por ejemplo, cierre la sesion de LXDE."
         exit 1
     fi
 fi
@@ -227,8 +220,8 @@ export TTY="\${tty:8:1}"
 clear
 tput civis
 "$md_inst/emulationstation.sh" "\$@"
-if [[ \$? -eq 139 ]]; then
-    dialog --cr-wrap --no-collapse --msgbox "Emulation Station crashed!\n\nIf this is your first boot of MasOS - make sure you are using the correct image for your system.\n\\nCheck your rom file/folder permissions and if running on a Raspberry Pi, make sure your gpu_split is set high enough and/or switch back to using carbon theme.\n\nFor more help please use the MasOS forum." 20 60 >/dev/tty
+if [[ $? -eq 139 ]]; then
+    dialog --cr-wrap --no-collapse --msgbox "¡EmulationStation fallo!\n\nSi esta es la primera vez que inicia MasOS, asegurese de estar usando la imagen correcta para su sistema.\n\\nVerifique los permisos de su archivo/carpeta rom y, si se esta ejecutando en una Raspberry Pi, asegurese de que gpu_split esta configurado lo suficientemente alto y/o vuelve a usar el theme MasOS.\n\nPara obtener mas ayuda, utiliza el telegram de MasOS." 20 60 >/dev/tty
 fi
 tput cnorm
 _EOF_
@@ -245,7 +238,7 @@ Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name[de_DE]=MasOS
-Name=rpie
+Name=Masos
 Comment[de_DE]=MasOS
 Comment=masos
 Icon=/usr/local/share/icons/masOS.svg
@@ -286,18 +279,27 @@ function configure_emulationstation() {
 
     install_launch_emulationstation
 
+    if isPlatform "rpi"; then
+        # make sure that ES has enough GPU memory
+        iniConfig "=" "" /boot/config.txt
+        iniSet "gpu_mem_256" 128
+        iniSet "gpu_mem_512" 256
+        iniSet "gpu_mem_1024" 256
+        iniSet "overscan_scale" 1
+    fi
+
     mkdir -p "/etc/emulationstation"
 
     # ensure we have a default theme
     rp_callModule esthemes install_theme
 
-    addAutoConf "es_swap_a_b" 1
+    addAutoConf "es_swap_a_b" 0
     addAutoConf "disable" 0
 }
 
 function gui_emulationstation() {
-    local es_swap=1
-    getAutoConf "es_swap_a_b" && es_swap=0
+    local es_swap=0
+    getAutoConf "es_swap_a_b" && es_swap=1
 
     local disable=0
     getAutoConf "disable" && disable=1
@@ -306,31 +308,31 @@ function gui_emulationstation() {
     local options
     while true; do
         local options=(
-            1 "Clear/Reset Emulation Station input configuration"
+            1 "Borrar/restablecer la configuracion de mandos de EmulationStation"
         )
 
         if [[ "$disable" -eq 0 ]]; then
-            options+=(2 "Auto Configuration (Currently: Enabled)")
+            options+=(2 "Configuracion automatica (Actualmente: Habilitada)")
         else
-            options+=(2 "Auto Configuration (Currently: Disabled)")
+            options+=(2 "Configuracion automatica (Actualmente: Deshabilitada)")
         fi
 
         if [[ "$es_swap" -eq 0 ]]; then
-            options+=(3 "Swap A/B Buttons in ES (Currently: Default)")
+            options+=(3 "Intercambiar botones A/B en ES (Actualmente: Predeterminado)")
         else
-            options+=(3 "Swap A/B Buttons in ES (Currently: Swapped)")
+            options+=(3 "Intercambiar botones A/B en ES (Actualmente: Intercambiados)")
         fi
 
-        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Elija una opcion" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         default="$choice"
 
         case "$choice" in
             1)
-                if dialog --defaultno --yesno "Are you sure you want to reset the Emulation Station controller configuration ? This will wipe all controller configs for ES and it will prompt to reconfigure on next start" 22 76 2>&1 >/dev/tty; then
+                if dialog --defaultno --yesno "¿Seguro que quieres restablecer la configuración de mandos de EmulationStation? Esto borrara todas las configuraciones de mandos para ES y le pedira que lo configure en el siguiente inicio" 22 76 2>&1 >/dev/tty; then
                     clear_input_emulationstation
-                    printMsgs "dialog" "$(_get_input_cfg_emulationstation) has been reset to default values."
+                    printMsgs "dialog" "$(_get_input_cfg_emulationstation) ha sido restablecido a los valores predeterminados."
                 fi
                 ;;
             2)
@@ -343,7 +345,7 @@ function gui_emulationstation() {
                 local ra_swap="false"
                 getAutoConf "es_swap_a_b" && ra_swap="true"
                 iniSet "menu_swap_ok_cancel_buttons" "$ra_swap" "$configdir/all/retroarch.cfg"
-                printMsgs "dialog" "You will need to reconfigure you controller in Emulation Station for the changes to take effect."
+                printMsgs "dialog" "Tendra que configurar su controlador en EmulationStation para que los cambios surtan efecto."
                 ;;
         esac
     done
