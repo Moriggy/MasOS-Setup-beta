@@ -628,7 +628,7 @@ function gui_setup() {
                           sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
                           sudo chmod -R +x /home/pi/RetroPie
                           sudo chmod -R +x /opt/
-                          sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+                          # sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
                         fi
                           if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
                             cd
