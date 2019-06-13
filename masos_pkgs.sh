@@ -8,7 +8,7 @@
 # MasOS El sistema operativo retro en español con emulationstation ,retroarch y varios scripts independientes mas configuraciones y themes nuevos.!
 #fork de retropie
 
-__version="2.5.7"
+__version="2.5.8"
 
 [[ "$__debug" -eq 1 ]] && set -x
 

@@ -544,11 +544,11 @@ function gui_setup() {
 					          sudo apt-get install -y libboost-all-dev
                     basic_install_setup
               #### gancho nuevo lineas 539-566
-              				sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
-              				sudo chmod +x /home/pi/RetroPie/retropiemenu/masosextrasall.sh
-              				sudo cp ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/masosextrasall.sh ~/RetroPie/retropiemenu/
-                              sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
-              			if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
+              				# sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
+              				# sudo chmod +x /home/pi/RetroPie/retropiemenu/masosextrasall.sh
+              				# sudo cp ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/masosextrasall.sh ~/RetroPie/retropiemenu/
+                      # sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
+              			if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
                 			cd
                 			sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
                 			sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
@@ -557,7 +557,7 @@ function gui_setup() {
                 			sudo chmod -R +x /opt/
                 			sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
                   else
-                      if [[ -f $home/.config/autostart/masos.desktop ]]; then
+                      if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
                     		cd
                     		sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
                     		sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
@@ -575,7 +575,7 @@ function gui_setup() {
 
                 update_packages_gui_setup
                 # Añadido para copiar los archivos del menu opciones
-                if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
+                if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
                   cd
                   sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
                   sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
@@ -583,8 +583,8 @@ function gui_setup() {
                   sudo chmod -R +x /home/pi/RetroPie
                   sudo chmod -R +x /opt/
                   sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
-                fi
-                if [[ -f $home/.config/autostart/masos.desktop ]]; then
+                else
+                  if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
                     cd
                     sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
                     sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
@@ -609,7 +609,7 @@ function gui_setup() {
                     exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
 
                     # Añadido para copiar los archivos del menu opciones
-                    if [[ -f /home/pi/RetroPie/retropiemenu/raspiconfig.rp ]]; then
+                    if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
                       cd
                       sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
                       sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
@@ -617,16 +617,16 @@ function gui_setup() {
                       sudo chmod -R +x /home/pi/RetroPie
                       sudo chmod -R +x /opt/
                       sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
-                    fi
-                    if [[ -f $home/.config/autostart/masos.desktop ]]; then
-                      cd
-                      sudo cp ~/MasOS-Setup/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-                      sudo cp -R ~/MasOS-Setup/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
-                      sudo cp -R ~/MasOS-Setup/scriptmodules/extras/scripts ~/RetroPie/
-                      sudo chmod -R +x ~/RetroPie
-                      sudo chmod -R +x /opt/
-                      sudo chown -R $user:$user ~/MasOS
-                    fi
+                    else
+                      if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
+                        cd
+                        sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
+                        sudo chmod -R +x ~/RetroPie
+                        sudo chmod -R +x /opt/
+                        sudo chown -R $user:$user ~/MasOS
+                      fi
                     # FIN DEL AÑADIDO
                 fi
                 ;;
