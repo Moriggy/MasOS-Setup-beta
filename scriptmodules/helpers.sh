@@ -1012,13 +1012,13 @@ function joy2keyStart() {
         params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
     fi
     # get the first joystick device (if not already set)
-    [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
+    [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/js0"
     # if no joystick device, or joy2key is already running exit
     [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
     # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
     if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
         __joy2key_pid=$!
-        # sleep 1
+        sleep 1
         return 0
     fi
     return 1
