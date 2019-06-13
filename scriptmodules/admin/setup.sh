@@ -631,7 +631,7 @@ function gui_setup() {
                           sudo chmod -R +x /home/pi/RetroPie
                           sudo chmod -R +x /opt/
                           sudo cp -R /home/pi/MasOS-Setup/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
-                        else
+                        fi
                           if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
                             cd
                             sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
