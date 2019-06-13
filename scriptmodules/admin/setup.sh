@@ -620,8 +620,6 @@ function gui_setup() {
                     if updatescript_setup; then
                         joy2keyStop
 
-                        exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
-
                         # Añadido para copiar los archivos del menu opciones
                         if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
                           cd
@@ -642,6 +640,7 @@ function gui_setup() {
                             sudo chown -R $user:$user ~/MasOS
                           fi
                         # FIN DEL AÑADIDO
+                        exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
                     fi
                   rps_logEnd
                   } &> >(_setup_gzip_log "$logfilename")
