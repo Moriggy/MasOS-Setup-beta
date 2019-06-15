@@ -82,7 +82,7 @@ function disable_plymouth_splashscreen() {
 }
 
 function default_splashscreen() {
-    echo "$md_inst/retropie-default.png" >/etc/splashscreen.list
+    echo "$md_inst/masos-default.png" >/etc/splashscreen.list
 }
 
 function enable_splashscreen() {
