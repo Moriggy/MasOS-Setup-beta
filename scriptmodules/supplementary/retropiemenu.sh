@@ -48,7 +48,6 @@ function configure_retropiemenu()
         'configedit'
         'esthemes'
         'filemanager'
-        'personalizarmasos'
         'raspiconfig'
         'retroarch'
         'retronetplay'
