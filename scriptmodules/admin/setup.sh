@@ -584,12 +584,42 @@ function gui_setup() {
                 config_gui_setup
                 ;;
             S)
-                dialog --defaultno --yesno "Estás seguro que quieres actualizar el script MasOS-Setup?" 22 76 2>&1 >/dev/tty || continue
+            dialog --defaultno --yesno "Estás seguro que quieres actualizar el script MasOS-Setup?" 22 76 2>&1 >/dev/tty || continue
+            local logfilename
+            __ERRMSGS=()
+            __INFMSGS=()
+            rps_logInit
+            {
+                rps_logStart
                 if updatescript_setup; then
                     joy2keyStop
+
+                    # Añadido para copiar los archivos del menu opciones
+                    if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
+                      cd
+                      sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
+                      sudo chmod -R +x /home/pi/RetroPie
+                      sudo chmod -R +x /opt/
+                      # sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+                    fi
+                      if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
+                        cd
+                        sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
+                        sudo chmod -R +x ~/RetroPie
+                        sudo chmod -R +x /opt/
+                        sudo chown -R $user:$user ~/MasOS
+                      fi
+                    # FIN DEL AÑADIDO
                     exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
                 fi
-                ;;
+              rps_logEnd
+              } &> >(_setup_gzip_log "$logfilename")
+              rps_printInfo "$logfilename"
+            ;;
             X)
                 local logfilename
                 __ERRMSGS=()

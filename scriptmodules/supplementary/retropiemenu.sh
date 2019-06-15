@@ -64,7 +64,6 @@ function configure_retropiemenu()
         'Editar Config'
         'ES Themes'
         'File Manager'
-        'Personalizar MasOS'
         'Raspi-Config'
         'Retroarch'
         'RetroArch Net Play'
@@ -80,16 +79,6 @@ function configure_retropiemenu()
         'Cambie las opciones comunes de RetroArch y edite manualmente las configuraciones de RetroArch, las configuraciones globales y las configuraciones que no son de RetroArch.'
         'Install, uninstall, or update EmulationStation themes. Most themes can be previewed at ..... coming soon!.'
         'Administrador de archivos básico de ASCII para Linux que le permite navegar, copiar, eliminar y mover archivos.'
-        'Muchas opciones mas para MasOS con solo un clic.
-
-Podras instalar:
-
-Bezels
-Launching image screens
-Video Loading Screens
-Arranque silencioso
-
-O tambien podras hacer overclock en tu raspberry pi 3B/3B+.'
         'Cambie la contraseña del usuario, las opciones de arranque, la internacionalización, la cámara, agregue su pi a Rastrack, overclock, overscan, división de memoria, SSH y más.'
         'Inicia la GUI de RetroArch para que pueda cambiar las opciones de RetroArch. Nota: Los cambios no se guardarán a menos que haya habilitado la opción "Guardar configuración al salir".'
         'Configure las opciones de RetroArch Netplay, elija host o cliente, puerto, IP de host, marcos de demora y su apodo.'
@@ -100,7 +89,6 @@ O tambien podras hacer overclock en tu raspberry pi 3B/3B+.'
     )
 
     setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/masos_pkgs.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
-    setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/supplementary/retropiemenu/PersonalizarMasOS.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
 
     local file
     local name
