@@ -94,7 +94,7 @@ function install_rp_image() {
         # extra quiet as the raspbian usr/lib/raspi-config/init_resize.sh does
         # sed -i 's/ quiet init=.*$//' /boot/cmdline.txt so this will remove the last quiet
         # and the init line but leave ours intact
-        sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" "$chroot/boot/cmdline.txt"
+        sed -i "s/quiet/quiet console=tty3 loglevel=3 consoleblank=0 plymouth.enable=0 logo.nologo quiet/" "$chroot/boot/cmdline.txt"
     fi
 
     # set default GPU mem, and overscan_scale so ES scales to overscan settings.
@@ -102,7 +102,7 @@ function install_rp_image() {
     iniSet "gpu_mem_256" 128
     iniSet "gpu_mem_512" 256
     iniSet "gpu_mem_1024" 256
-    iniSet "overscan_scale" 1
+    iniSet "overscan_scale" 0
 
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
