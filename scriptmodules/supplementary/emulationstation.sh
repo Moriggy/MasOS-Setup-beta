@@ -197,7 +197,7 @@ function install_launch_emulationstation() {
 #!/bin/bash
 
 if [[ \$(id -u) -eq 0 ]]; then
-    echo "emulationstation no debe ejecutarse como root. Si usaste 'sudo emulationstation', ejecutalo sin sudo."
+    echo "EmulationStation no debe ejecutarse como root. Si usaste 'sudo emulationstation', ejecutalo sin sudo."
     exit 1
 fi
 
@@ -285,7 +285,7 @@ function configure_emulationstation() {
         iniSet "gpu_mem_256" 128
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
-        iniSet "overscan_scale" 1
+        iniSet "overscan_scale" 0
     fi
 
     mkdir -p "/etc/emulationstation"
@@ -293,13 +293,13 @@ function configure_emulationstation() {
     # ensure we have a default theme
     rp_callModule esthemes install_theme
 
-    addAutoConf "es_swap_a_b" 0
+    addAutoConf "es_swap_a_b" 1
     addAutoConf "disable" 0
 }
 
 function gui_emulationstation() {
-    local es_swap=0
-    getAutoConf "es_swap_a_b" && es_swap=1
+    local es_swap=1
+    getAutoConf "es_swap_a_b" && es_swap=0
 
     local disable=0
     getAutoConf "disable" && disable=1
@@ -323,7 +323,7 @@ function gui_emulationstation() {
             options+=(3 "Intercambiar botones A/B en ES (Actualmente: Intercambiados)")
         fi
 
-        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Elija una opcion" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Escoge una opcion" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         default="$choice"

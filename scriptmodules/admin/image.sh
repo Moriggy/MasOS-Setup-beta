@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-# This file is part of The MasOS Project
+# This file is part of The RetroPie Project
 #
-# The MasOS Project is the legal property of its developers, whose names are
+# The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
-# Script modificado por mabedeep para crear isos de MasOS.
+#
 
 rp_module_id="image"
 rp_module_desc="Create/Manage MasOS images"
@@ -15,7 +15,7 @@ rp_module_section=""
 rp_module_flags="!arm"
 
 function depends_image() {
-    getDepends kpartx unzip qemu-user-static rsync parted squashfs-tools dosfstools e2fsprogs
+    getDepends kpartx unzip binfmt-support qemu-user-static rsync parted squashfs-tools dosfstools e2fsprogs
 }
 
 function create_chroot_image() {
@@ -55,13 +55,15 @@ function create_chroot_image() {
     fi
 
     # mount image
-    kpartx -s -a "$image"
+    local partitions=($(kpartx -s -a -v "$image" | awk '{ print "/dev/mapper/"$3 }'))
+    local part_boot="${partitions[0]}"
+    local part_root="${partitions[1]}"
 
     local tmp="$(mktemp -d -p "$md_build")"
     mkdir -p "$tmp/boot"
 
-    mount /dev/mapper/loop0p2 "$tmp"
-    mount /dev/mapper/loop0p1 "$tmp/boot"
+    mount "$part_root" "$tmp"
+    mount "$part_boot" "$tmp/boot"
 
     printMsgs "console" "Creating chroot from $image ..."
     rsync -aAHX --numeric-ids --delete "$tmp/" "$chroot/"
@@ -81,7 +83,7 @@ function install_rp_image() {
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
 
-    # hostname to retropie
+    # hostname to masos
     echo "masos" >"$chroot/etc/hostname"
     sed -i "s/raspberrypi/masos/" "$chroot/etc/hosts"
 
@@ -95,19 +97,27 @@ function install_rp_image() {
         sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" "$chroot/boot/cmdline.txt"
     fi
 
+    # set default GPU mem, and overscan_scale so ES scales to overscan settings.
+    iniConfig "=" "" "$chroot/boot/config.txt"
+    iniSet "gpu_mem_256" 128
+    iniSet "gpu_mem_512" 256
+    iniSet "gpu_mem_1024" 256
+    iniSet "overscan_scale" 1
+
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
 sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
 git clone https://github.com/Moriggy/MasOS-Setup-beta.git
-cd MasOS-Setup
+cd MasOS-Setup-beta
 modules=(
     'raspbiantools apt_upgrade'
     'setup basic_install'
     'bluetooth depends'
     'raspbiantools enable_modules'
     'autostart enable'
+    'usbromservice'
     'samba depends'
     'samba install_shares'
     'splashscreen default'
@@ -210,10 +220,12 @@ function create_image() {
     local image_name="${image##*/}"
     pushd "$image_path"
 
-    kpartx -s -a "$image_name"
+    local partitions=($(kpartx -s -a -v "$image_name" | awk '{ print "/dev/mapper/"$3 }'))
+    local part_boot="${partitions[0]}"
+    local part_root="${partitions[1]}"
 
-    mkfs.vfat -F 16 -n boot /dev/mapper/loop0p1
-    mkfs.ext4 -O ^metadata_csum,^huge_file -L retropie /dev/mapper/loop0p2
+    mkfs.vfat -F 16 -n boot "$part_boot"
+    mkfs.ext4 -O ^metadata_csum,^huge_file -L masos "$part_root"
 
     parted "$image_name" print
 
@@ -223,9 +235,9 @@ function create_image() {
     # mount
     printMsgs "console" "Mounting $image_name ..."
     local tmp="$(mktemp -d -p "$md_build")"
-    mount /dev/mapper/loop0p2 "$tmp"
+    mount "$part_root" "$tmp"
     mkdir -p "$tmp/boot"
-    mount /dev/mapper/loop0p1 "$tmp/boot"
+    mount "$part_boot" "$tmp/boot"
 
     # copy files
     printMsgs "console" "Rsyncing chroot to $image_name ..."
@@ -233,7 +245,7 @@ function create_image() {
 
     # we need to fix up the UUIDS for /boot/cmdline.txt and /etc/fstab
     local old_id="$(sed "s/.*PARTUUID=\([^-]*\).*/\1/" $tmp/boot/cmdline.txt)"
-    local new_id="$(blkid -s PARTUUID -o value /dev/mapper/loop0p2 | cut -c -8)"
+    local new_id="$(blkid -s PARTUUID -o value "$part_root" | cut -c -8)"
     sed -i "s/$old_id/$new_id/" "$tmp/boot/cmdline.txt"
     sed -i "s/$old_id/$new_id/g" "$tmp/etc/fstab"
 

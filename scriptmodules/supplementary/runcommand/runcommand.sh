@@ -90,7 +90,6 @@ function get_config() {
         DISABLE_JOYSTICK="$ini_value"
         iniGet "disable_menu"
         DISABLE_MENU="$ini_value"
-        [[ "$DISABLE_MENU" -eq 1 ]] && DISABLE_JOYSTICK=1
         iniGet "image_delay"
         IMAGE_DELAY="$ini_value"
         [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
@@ -116,14 +115,19 @@ function start_joy2key() {
 
         # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
-        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09 &
-        JOY2KEY_PID=$!
+        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09
+        JOY2KEY_PID=$(pgrep -f joy2key.py)
+
+    # ensure coherency between on-screen prompts and actual button mapping functionality
+    sleep 0.3
     fi
 }
 
 function stop_joy2key() {
     if [[ -n "$JOY2KEY_PID" ]]; then
-        kill -INT "$JOY2KEY_PID"
+        kill "$JOY2KEY_PID"
+        JOY2KEY_PID=""
+        sleep 1
     fi
 }
 
@@ -442,7 +446,7 @@ function main_menu() {
             [[ -n "$vid_rom" ]] && options+=(7 "Remove video mode choice for $EMULATOR + ROM")
         fi
 
-        if [[ "$COMMAND" =~ retroarch ]]; then
+        if [[ "$EMULATOR" == lr-* ]]; then
             options+=(
                 8 "Select RetroArch render res for $EMULATOR ($RENDER_RES)"
                 9 "Edit custom RetroArch config for this ROM"
@@ -460,7 +464,7 @@ function main_menu() {
 
         options+=(X "Launch")
 
-        if [[ "$COMMAND" =~ retroarch ]]; then
+        if [[ "$EMULATOR" == lr-* ]]; then
             options+=(L "Launch with verbose logging")
             options+=(Z "Launch with netplay enabled")
         fi
@@ -595,7 +599,8 @@ function choose_emulator() {
         ((i++))
     done < <(sort "$EMU_SYS_CONF")
     if [[ -z "${options[*]}" ]]; then
-        dialog --msgbox "No emulator options found for $SYSTEM - have you installed any snes emulators yet? Do you have a valid $EMU_SYS_CONF ?" 20 60 >/dev/tty
+        dialog --msgbox "No emulator options found for $SYSTEM - Do you have a valid $EMU_SYS_CONF ?" 20 60 >/dev/tty
+        stop_joy2key
         exit 1
     fi
     local cmd=(dialog $cancel --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
@@ -779,7 +784,7 @@ function config_dispmanx() {
 
 function retroarch_append_config() {
     # only for retroarch emulators
-    [[ ! "$COMMAND" =~ "retroarch" ]] && return
+    [[ "$EMULATOR" != lr-* ]] && return
 
     # make sure tmp folder exists for unpacking archives
     mkdir -p "/tmp/retroarch"
@@ -847,6 +852,7 @@ function restore_governor() {
 function get_sys_command() {
     if [[ ! -f "$EMU_SYS_CONF" ]]; then
         echo "No config found for system $SYSTEM"
+        stop_joy2key
         exit 1
     fi
 
@@ -951,13 +957,12 @@ function show_launch() {
         else
             launch_name="$EMULATOR"
         fi
-        DIALOGRC="$CONFIGDIR/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLanzando $launch_name ...\n\nPulsa el boton A para configurar CORE\n\nErrors are logged to $LOG" 9 60
+        DIALOGRC="$CONFIGDIR/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $LOG" 9 60
     fi
 }
 
 function check_menu() {
     local dont_launch=0
-    start_joy2key
     # check for key pressed to enter configuration
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
@@ -971,7 +976,6 @@ function check_menu() {
         tput civis
         clear
     fi
-    stop_joy2key
     return $dont_launch
 }
 
@@ -1032,15 +1036,18 @@ function runcommand() {
 
     load_mode_defaults
 
+    start_joy2key
     show_launch
 
     if [[ "$DISABLE_MENU" -ne 1 ]]; then
         if ! check_menu; then
+            stop_joy2key
             user_script "runcommand-onend.sh"
             clear
             restore_cursor_and_exit 0
         fi
     fi
+    stop_joy2key
 
     mode_switch "$MODE_REQ_ID"
 
@@ -1073,7 +1080,7 @@ function runcommand() {
     # reset/restore framebuffer res (if it was changed)
     [[ -n "$FB_NEW" ]] && restore_fb
 
-    [[ "$COMMAND" =~ retroarch ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
+    [[ "$EMULATOR" == lr-* ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
 
     user_script "runcommand-onend.sh"
 
