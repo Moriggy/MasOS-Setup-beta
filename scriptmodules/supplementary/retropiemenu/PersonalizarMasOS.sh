@@ -42,7 +42,7 @@ function main_menu() {
 			        esac
 			    # done
 			else
-				choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
+					choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
 						1 "Instalar Bezels" \
 						2 "Vídeos de Carga de Roms" \
 						2>&1 > /dev/tty)
@@ -52,7 +52,8 @@ function main_menu() {
 						2) launching_videos  ;;
 						*)  break ;;
 			        esac
-			done
+					fi
+					# done
 
 }
 
