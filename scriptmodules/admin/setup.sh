@@ -587,8 +587,8 @@ function gui_setup() {
                 config_gui_setup
                 ;;
             E)
-                    sudo $scriptdir/scriptmodules/supplementary/retropiemenu/PersonalizarMasOS.sh
-                    ;;
+                exec "$scriptdir/scriptmodules/supplementary/retropiemenu/PersonalizarMasOS.sh"
+                ;;
             S)
             dialog --defaultno --yesno "Estás seguro que quieres actualizar el script MasOS-Setup?" 22 76 2>&1 >/dev/tty || continue
             local logfilename
