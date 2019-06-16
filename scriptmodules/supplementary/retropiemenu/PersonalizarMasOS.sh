@@ -24,8 +24,7 @@ dialog --backtitle "http://masos.dx.am		MasOS Team" \
 function main_menu() {
 
 	local choice
-	if isPlatform "rpi"; then
-    while true; do
+	while true; do
         choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
 						1 "Instalar Bezels" \
 						2 "Vídeos de Carga de Roms" \
@@ -42,22 +41,6 @@ function main_menu() {
 						*)  break ;;
 			        esac
 		done
-
-	else
-		while true; do
-        choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
-						1 "Instalar Bezels" \
-						2 "Vídeos de Carga de Roms" \
-
-						2>&1 > /dev/tty)
-
-			        case "$choice" in
-						1) bezels  ;;
-						2) launching_videos  ;;
-						*)  break ;;
-			        esac
-		done
-	fi
 
 }
 
