@@ -513,9 +513,6 @@ function gui_setup() {
             C "Configuración / herramientas"
             "C Configuración y herramientas. Configure samba y cualquier paquete que haya instalado que tenga opciones de configuración adicionales también aparecerán aquí."
 
-            E "Personalizar MasOS"
-            "E Opciones para añadir bezels, videolaunching, etc a tu sistema MasOS."
-
             S "Actualizar script MasOS-Setup"
             "S Actualice el script Masos-Setup. Esto actualizará SÓLO este script de administración principal, pero NO actualizará ningún paquete de software. Para actualizar los paquetes, use la opción 'Update' del menú principal, que también actualizará el script de instalación de MasOS."
 
@@ -556,19 +553,19 @@ function gui_setup() {
                       # sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
               			if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
                 			cd
-                			# sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-                			# sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
-#                			sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
-#                			sudo chmod -R +x /home/pi/RetroPie
+                			sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                			sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+                			sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
+               			  sudo chmod -R +x /home/pi/RetroPie
                 			sudo chmod -R +x /opt/
                 			sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
                   else
                       if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
                     		cd
-                    		# sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-                    		# sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
-#                    		sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
-#                    		sudo chmod -R +x ~/RetroPie
+                    		sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                    		sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+                    		sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
+                    		sudo chmod -R +x ~/RetroPie
                     		sudo chmod -R +x /opt/
                     		sudo chown -R $user:$user ~/MasOS
                     			fi
@@ -585,9 +582,6 @@ function gui_setup() {
                 ;;
             C)
                 config_gui_setup
-                ;;
-            E)
-                exec "$scriptdir/scriptmodules/supplementary/retropiemenu/PersonalizarMasOS.sh"
                 ;;
             S)
             dialog --defaultno --yesno "Estás seguro que quieres actualizar el script MasOS-Setup?" 22 76 2>&1 >/dev/tty || continue
