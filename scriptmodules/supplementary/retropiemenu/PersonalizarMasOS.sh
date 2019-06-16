@@ -40,7 +40,7 @@ function main_menu() {
 						4) silencio  ;;
 						*)  break ;;
 			        esac
-			    done
+			    # done
 			else
 				choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
 						1 "Instalar Bezels" \
@@ -52,8 +52,7 @@ function main_menu() {
 						2) launching_videos  ;;
 						*)  break ;;
 			        esac
-			    done
-
+			done
 
 }
 
