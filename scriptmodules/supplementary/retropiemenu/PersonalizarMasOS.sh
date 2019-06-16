@@ -25,12 +25,12 @@ function main_menu() {
 
 	local choice
     while true; do
-			if isPlatform "rpi"; then
         choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
 						1 "Instalar Bezels" \
 						2 "Vídeos de Carga de Roms" \
 						3 "Overclock (SÓLO) Raspberry pi" \
 						4 "Arranque silencioso" \
+
 						2>&1 > /dev/tty)
 
 			        case "$choice" in
@@ -40,20 +40,7 @@ function main_menu() {
 						4) silencio  ;;
 						*)  break ;;
 			        esac
-			    # done
-			else
-					choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
-						1 "Instalar Bezels" \
-						2 "Vídeos de Carga de Roms" \
-						2>&1 > /dev/tty)
-
-			        case "$choice" in
-						1) bezels  ;;
-						2) launching_videos  ;;
-						*)  break ;;
-			        esac
-					fi
-					# done
+		done
 
 }
 
