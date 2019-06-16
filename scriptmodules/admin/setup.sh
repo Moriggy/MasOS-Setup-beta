@@ -545,6 +545,7 @@ function gui_setup() {
                 rps_logInit
                 {
                     rps_logStart
+                    sudo apt-get install -y libboost-all-dev
                     basic_install_setup
                     #### gancho nuevo lineas 539-566
               				# sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
