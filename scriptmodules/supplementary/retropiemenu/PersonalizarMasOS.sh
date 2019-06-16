@@ -24,31 +24,31 @@ dialog --backtitle "http://masos.dx.am		MasOS Team" \
 function main_menu() {
 
 	local choice
-	while true; do
-        choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \ --ok-label OK --cancel-label Exit \ --menu "Que acción te gustaría personalizar?" 25 75 20 \
-						1 "Instalar Bezels" \
-						2 "Vídeos de Carga de Roms" \
-						3 "Overclock (SÓLO) Raspberry pi" \
-						4 "Arranque silencioso" \
+    while true; do
+        choice=$(dialog --backtitle "MasOS Team		Personalización de MasOS (script hecho por Moriggy)" --title " MAIN MENU " \
+            --ok-label OK --cancel-label Exit \
+            --menu "Que acción te gustaría personalizar?" 25 75 20 \
+			1 "Instalar Bezels" \
+			2 "Vídeos de Carga de Roms" \
+			3 "Overclock (SÓLO) Raspberry pi" \
+			4 "Arranque silencioso" \
+			2>&1 > /dev/tty)
 
-						2>&1 > /dev/tty)
-
-			        case "$choice" in
-						1) bezels  ;;
-						2) launching_videos  ;;
-						3) overclock  ;;
-						4) silencio  ;;
-						*)  break ;;
-			        esac
-		done
-
+        case "$choice" in
+			1) bezels  ;;
+			2) launching_videos  ;;
+			3) overclock  ;;
+			4) silencio  ;;
+			*)  break ;;
+        esac
+    done
 }
 
 # Funcion para instalar bezels	#
 
 function bezels() {
 
-	sudo ~/Retropie/scripts/MainBezels.sh
+	sudo ~/RetroPie/scripts/MainBezels.sh
 
 }
 
@@ -56,7 +56,7 @@ function bezels() {
 
 function launching_videos() {
 
-	sudo ~/Retropie/scripts/videoloading.sh
+	sudo ~/RetroPie/scripts/videoloading.sh
 
 }
 
@@ -64,7 +64,7 @@ function launching_videos() {
 
 function overclock() {
 
-	sudo ~/Retropie/scripts/overclock.sh
+	sudo ~/RetroPie/scripts/overclock.sh
 
 }
 
@@ -72,7 +72,7 @@ function overclock() {
 
 function silencio() {
 
-	sudo ~/Retropie/scripts/sym.sh
+	sudo ~/RetroPie/scripts/sym.sh
 
 }
 
