@@ -110,7 +110,28 @@ function updatescript_setup()
     fi
     popd >/dev/null
 
-    printMsgs "dialog" "Ya tienes la última versión del script de MasOS-Setup."
+    printMsgs "dialog" "Ya tienes descargada la última versión del script de MasOS-Setup."
+
+    # Añadido para copiar los archivos del menu opciones
+    if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
+      cd
+      sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
+      sudo chmod -R +x /home/pi/RetroPie
+      sudo chmod -R +x /opt/
+    fi
+      if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
+        cd
+        sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
+        sudo chmod -R +x ~/RetroPie
+        sudo chmod -R +x /opt/
+        sudo chown -R $user:$user ~/MasOS
+      fi
+    # FIN DEL AÑADIDO
+
     return 0
 }
 
@@ -427,7 +448,7 @@ function update_packages_gui_setup() {
     } &> >(_setup_gzip_log "$logfilename")
 
     rps_printInfo "$logfilename"
-    printMsgs "dialog" "Los paquetes instalados se han actualizado. Se reiniciará el sistema para efectuar todos los cambios"; sleep 3
+    printMsgs "dialog" "Los paquetes instalados se han actualizado. Se reiniciará el sistema para efectuar todos los cambios"
     sudo killall emulationstation
     sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
     reboot_setup
@@ -607,41 +628,13 @@ function gui_setup() {
                 config_gui_setup
                 ;;
             S)
-            dialog --defaultno --yesno "Estás seguro que quieres actualizar el script MasOS-Setup?" 22 76 2>&1 >/dev/tty || continue
-            local logfilename
-            __ERRMSGS=()
-            __INFMSGS=()
-            rps_logInit
-            {
-                rps_logStart
+                dialog --defaultno --yesno "Estás seguro que quieres actualizar el script MasOS-Setup?" 22 76 2>&1 >/dev/tty || continue
                 if updatescript_setup; then
                     joy2keyStop
 
-                    # Añadido para copiar los archivos del menu opciones
-                    if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
-                      cd
-                      sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
-                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
-                      sudo chmod -R +x /home/pi/RetroPie
-                      sudo chmod -R +x /opt/
-                    fi
-                      if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
-                        cd
-                        sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
-                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
-                        sudo chmod -R +x ~/RetroPie
-                        sudo chmod -R +x /opt/
-                        sudo chown -R $user:$user ~/MasOS
-                      fi
-                    # FIN DEL AÑADIDO
                     exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
                 fi
-              rps_logEnd
-              } &> >(_setup_gzip_log "$logfilename")
-              rps_printInfo "$logfilename"
-            ;;
+                ;;
             X)
                 local logfilename
                 __ERRMSGS=()

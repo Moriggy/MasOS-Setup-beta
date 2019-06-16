@@ -11,7 +11,7 @@
 
 rp_module_id="bashwelcometweak"
 rp_module_desc="Bash Welcome Tweak (muestra información adicional del sistema al loguear)"
-rp_module_section="config"
+rp_module_section="main"
 
 function install_bashwelcometweak() {
     remove_bashwelcometweak
