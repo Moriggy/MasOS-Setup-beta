@@ -427,8 +427,10 @@ function update_packages_gui_setup() {
     } &> >(_setup_gzip_log "$logfilename")
 
     rps_printInfo "$logfilename"
-    printMsgs "dialog" "Los paquetes instalados se han actualizado."
-    gui_setup
+    printMsgs "dialog" "Los paquetes instalados se han actualizado. Se reiniciará el sistema para efectuar todos los cambios"; sleep 3
+    sudo killall emulationstation
+    sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
+    reboot_setup
 }
 
 function basic_install_setup() {
@@ -493,6 +495,29 @@ function reboot_setup()
     reboot
 }
 
+# arranque silencioso de instalación based
+function silencio() {
+	fichero_nec="/boot/cmdline.txt"
+	clear
+	cp $fichero_nec $fichero_nec.bkp
+	dato="$(cat /boot/cmdline.txt | grep 'PARTUUID' | cut -d  " "  -f4)"
+
+	if [[ -f "$fichero_nec" ]]; then
+		echo "Activando arranque silencioso."
+		echo "Espera un momento..." ; sleep 1
+
+		sudo cat > $fichero_nec <<_EOF_
+dwc_otg.lpm_enable=0 console=serial0,115200 console=tty3 loglevel=3 $dato rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait plymouth.enable=0 logo.nologo
+_EOF_
+		sudo chmod -R +x $fichero_nec
+		sudo chown -R root:root $fichero_nec
+		echo "El arranque silencioso configurado" ; sleep 2
+	else
+		echo "El $fichero no existe, no se ha podido configurar el arranque silencioso." ; sleep 2
+	fi
+
+}
+
 # masos-setup main menu
 function gui_setup() {
     depends_setup
@@ -547,11 +572,8 @@ function gui_setup() {
                     rps_logStart
                     sudo apt-get install -y libboost-all-dev
                     basic_install_setup
-                    #### gancho nuevo lineas 539-566
-              				# sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/masosextrasall.sh /home/pi/RetroPie/retropiemenu/
-              				# sudo chmod +x /home/pi/RetroPie/retropiemenu/masosextrasall.sh
-              				# sudo cp ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/masosextrasall.sh ~/RetroPie/retropiemenu/
-                      # sudo chmod +x ~/RetroPie/retropiemenu/masosextrasall.sh
+                    silencio
+                    #### gancho nuevo copia de scripts nuestros
               			if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
                 			cd
                 			sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
@@ -569,8 +591,8 @@ function gui_setup() {
                     		sudo chmod -R +x ~/RetroPie
                     		sudo chmod -R +x /opt/
                     		sudo chown -R $user:$user ~/MasOS
-                    			fi
-      		           fi
+                    	fi
+      		          fi
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
@@ -596,24 +618,23 @@ function gui_setup() {
                     joy2keyStop
 
                     # Añadido para copiar los archivos del menu opciones
-#                    if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
-#                      cd
-#                      sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-#                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
-#                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
-#                      sudo chmod -R +x /home/pi/RetroPie
-#                      sudo chmod -R +x /opt/
-                      # sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/es_idioma/* /opt/masos/supplementary/emulationstation/
-#                    fi
-#                      if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
-#                        cd
-#                        sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
-#                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
-#                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
-#                        sudo chmod -R +x ~/RetroPie
-#                        sudo chmod -R +x /opt/
-#                        sudo chown -R $user:$user ~/MasOS
-#                      fi
+                    if [[ -f "/home/pi/RetroPie/retropiemenu/raspiconfig.rp" ]]; then
+                      cd
+                      sudo cp /home/pi/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* /home/pi/RetroPie/retropiemenu/
+                      sudo cp -R /home/pi/MasOS-Setup-beta/scriptmodules/extras/scripts /home/pi/RetroPie/
+                      sudo chmod -R +x /home/pi/RetroPie
+                      sudo chmod -R +x /opt/
+                    fi
+                      if [[ -f "$home/.config/autostart/masos.desktop" ]]; then
+                        cd
+                        sudo cp ~/MasOS-Setup-beta/scriptmodules/extras/gamelist.xml /opt/masos/configs/all/emulationstation/gamelists/retropie/
+                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/supplementary/retropiemenu/* ~/RetroPie/retropiemenu/
+                        sudo cp -R ~/MasOS-Setup-beta/scriptmodules/extras/scripts ~/RetroPie/
+                        sudo chmod -R +x ~/RetroPie
+                        sudo chmod -R +x /opt/
+                        sudo chown -R $user:$user ~/MasOS
+                      fi
                     # FIN DEL AÑADIDO
                     exec "$scriptdir/masos_pkgs.sh" setup post_update gui_setup
                 fi
