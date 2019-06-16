@@ -17,11 +17,11 @@ RSP_PLUGIN="$4"
 [[ -n "$RES" ]] && RES="--resolution $RES"
 [[ -z "$RSP_PLUGIN" ]] && RSP_PLUGIN="mupen64plus-rsp-hle"
 
-rootdir="/opt/masos"
+rootdir="/opt/retropie"
 configdir="$rootdir/configs"
 config="$configdir/n64/mupen64plus.cfg"
 inputconfig="$configdir/n64/InputAutoCfg.ini"
-datadir="$HOME/MasOS"
+datadir="$HOME/RetroPie"
 romdir="$datadir/roms"
 
 source "$rootdir/lib/inifuncs.sh"
@@ -175,7 +175,6 @@ function testCompatibility() {
     local blacklist=(
         naboo
         body
-        infernal
     )
 
     # these games do not run with gles2n64
@@ -197,6 +196,7 @@ function testCompatibility() {
         rogue
         squadron
         gauntlet
+        infernal
     )
 
     # these games have massive glitches if legacy blending is enabled
@@ -206,6 +206,7 @@ function testCompatibility() {
         donkey
         zelda
         bomberman
+        infernal
     )
 
     local GLideN64NativeResolution_blacklist=(
@@ -225,6 +226,7 @@ function testCompatibility() {
         starcraft
         rogue
         squadron
+        infernal
     )
 
     for game in "${blacklist[@]}"; do

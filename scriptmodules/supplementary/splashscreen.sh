@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# This file is part of The RetroPie Project
+# This file is part of The MasOS Project
 #
-# The RetroPie Project is the legal property of its developers, whose names are
+# The MasOS Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
@@ -10,7 +10,7 @@
 #
 
 rp_module_id="splashscreen"
-rp_module_desc="Configure Splashscreen"
+rp_module_desc="Configurar Splashscreen"
 rp_module_section="main"
 rp_module_flags="noinstclean !x86 !osmc !xbian !mali !kms"
 
