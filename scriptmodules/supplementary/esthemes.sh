@@ -33,7 +33,7 @@ function install_theme_esthemes() {
     fi
     mkdir -p "/etc/emulationstation/themes"
     gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
-	sudo chown -R pi:pi /etc/emulationstation/themes/*
+	  sudo chown -R pi:pi /etc/emulationstation/themes/*
 }
 
 function uninstall_theme_esthemes() {
@@ -58,7 +58,7 @@ function gui_esthemes() {
 		'Moriggy es-next-pixel-Legacy'
 		'Moriggy es-next-pixel-Wheel'
 		'Moriggy hypernostalgic'
-        'Moriggy MasOS'
+    'Moriggy MasOS'
 		'Moriggy maximus-v3'
 		'Moriggy retro'
 		'Moriggy PandoraBoxVerde'
@@ -72,23 +72,23 @@ function gui_esthemes() {
 		'dmmarti kidz'
 		'ehettervik workbench'
 		'ruckage famicom-mini'
-        'ruckage snes-mini'
+    'ruckage snes-mini'
 		'ruckage nes-mini'
-        'TMNTturtleguy ComicBook'
-        'TMNTturtleguy ComicBook_4-3'
-        'TMNTturtleguy ComicBook_SE-Wheelart'
-        'TMNTturtleguy ComicBook_4-3_SE-Wheelart'
+    'TMNTturtleguy ComicBook'
+    'TMNTturtleguy ComicBook_4-3'
+    'TMNTturtleguy ComicBook_SE-Wheelart'
+    'TMNTturtleguy ComicBook_4-3_SE-Wheelart'
 		'HerbFargus tronkyfran'
 		'dmmarti hurstyblue'
-	    'garaine marioblue'
-        'garaine bigwood'
+	  'garaine marioblue'
+    'garaine bigwood'
 		'RetroHursty69 neogeo_only'
 		'RetroHursty69 graffiti'
 		'RetroHursty69 cabsnazzy'
 		'RetroHursty69 heychromey'
 		'SuperMagicom nostalgic'
 		'RetroHursty69 comiccrazy'
-	    'RetroHursty69 greenilicious'
+	  'RetroHursty69 greenilicious'
 		'waweedman pii-wii'
 	)
     while true; do

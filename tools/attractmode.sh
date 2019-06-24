@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# ESTE FICHERO FORMA PARTE DEL PROYECTO MASOS CREADO POR MasOS TEAM 2018/2019. 
+# ESTE FICHERO FORMA PARTE DEL PROYECTO MASOS CREADO POR MasOS TEAM 2018/2019.
 #
 # See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/DOCK-PI3/MasOS-Setup/master/LICENSE.md
@@ -32,7 +32,7 @@ function main_menu() {
 
 #########################################################################
 # Funcion Reparar permisos en MasOS PC ;-) #
-function masos_attractinstall() {                                          
+function masos_attractinstall() {
 
 # Cierra ES para una mejor y mas rapida compilacion de attract y ffmpeg......
 sudo killall emulationstation
@@ -95,8 +95,8 @@ sudo chmod -R +x /opt/masos/configs/all/AM-Start.sh
 sudo chown -R pi:pi /opt/masos/configs/all/AM-Start.sh
 sudo chown -R root:root /home/pi/RetroPie/retropiemenu/
 cd && mkdir .attract
-dialog --infobox " Se a creado un script en el menu de ES para cambiar a attract mode ,una vez que inicie attract seleccione su idioma \n ,ya puede usar atrractmode. " 350 350 ; sleep 10
-dialog --infobox " Attract se instalo de forma correcta y con mmal. Ahora si quiere,despues de seguir las indicaciones anteriores ,puede ejecutar de nuevo el script e instalar la configuracion para attrac mode. \n\nNOTA IMPORTANTE: Antes de instalar la configuracion para attract tiene que iniciar attractmode una vez como minimo ,luego cierre attract ejecute emulationstation e inicie masos extras all para terminar de instalar la configuracion... ,reiniciando en 20s" 350 350 ; sleep 20
+dialog --infobox " Se ha creado un script en el menu de ES para cambiar a attract mode, una vez que inicie attract seleccione su idioma,\nya puede usar atrractmode. " 350 350 ; sleep 10
+dialog --infobox " Attract se instaló de forma correcta y con mmal. Ahora si quiere, despues de seguir las indicaciones anteriores, puedes ejecutar de nuevo el script e instalar la configuracion para attrac mode. \n\nNOTA IMPORTANTE: Antes de instalar la configuracion para attract tiene que iniciar attractmode una vez como minimo ,luego cierre attract ejecute emulationstation e inicie masos extras all para terminar de instalar la configuracion..., reiniciando en 20s" 350 350 ; sleep 20
 sudo shutdown -r now
 # ---------------------------- #
 }

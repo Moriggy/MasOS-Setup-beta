@@ -53,14 +53,14 @@ Puede seleccionar sistemas individuales para eliminar el exceso de archivos mult
 	</game>
 	<game>
 		<path>./raspiconfig.rp</path>
-		<name>Raspberry Configurador</name>
-		<desc>Configurador oficial incorporado en Raspberry pi.Cambie la contraseña del usuario, las opciones de arranque, la internacionalización, la cámara, agregue su pi a Rastrack, overclock, overscan, división de memoria, SSH y más.</desc>
+		<name>Raspi-config</name>
+		<desc>Configurador oficial incorporado en Raspberry Pi. Cambie la contraseña de usuario, las opciones de arranque, la internacionalización, la cámara, agregue su pi a Rastrack, overclock, overscan, división de memoria, SSH y más.</desc>
 		<image>./icons/raspiconfig.png</image>
 	</game>
 	<game>
 		<path>./esthemes.rp</path>
 		<name>ES Themes</name>
-		<desc>Instalar, desinstalar o actualizar temas de EmulationStation. La mayoría de los temas se pueden previsualizar en https://github.com/Moriggy/</desc>
+		<desc>Instalar, desinstalar o actualizar temas de EmulationStation. Los themes creados por MasOS Team, se pueden previsualizar en http://es-themes-masos.ml/</desc>
 		<image>./icons/esthemes.png</image>
 	</game>
 	<game>

@@ -277,7 +277,7 @@ function section_gui_setup() {
 
         # we don't build binaries for experimental packages
         if rp_hasBinaries && [[ "$section" != "exp" ]]; then
-            options+=(B "nstalar / Actualizar todos ${__sections[$section]} los paquetes de binario" "Esto instalará todos los paquetes ${__sections[$section]} de archivos binarios (si están disponibles). Si falta un archivo binario, se realizará una instalación desde la fuente.")
+            options+=(B "Instalar / Actualizar todos ${__sections[$section]} los paquetes de binario" "Esto instalará todos los paquetes ${__sections[$section]} de archivos binarios (si están disponibles). Si falta un archivo binario, se realizará una instalación desde la fuente.")
         fi
 
         options+=(
@@ -524,15 +524,12 @@ function silencio() {
 	dato="$(cat /boot/cmdline.txt | grep 'PARTUUID' | cut -d  " "  -f4)"
 
 	if [[ -f "$fichero_nec" ]]; then
-		echo "Activando arranque silencioso."
-		echo "Espera un momento..." ; sleep 1
-
 		sudo cat > $fichero_nec <<_EOF_
 dwc_otg.lpm_enable=0 console=serial0,115200 console=tty3 loglevel=3 $dato rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait plymouth.enable=0 logo.nologo
 _EOF_
 		sudo chmod -R +x $fichero_nec
 		sudo chown -R root:root $fichero_nec
-		echo "El arranque silencioso configurado" ; sleep 2
+
 	else
 		echo "El $fichero no existe, no se ha podido configurar el arranque silencioso." ; sleep 2
 	fi
