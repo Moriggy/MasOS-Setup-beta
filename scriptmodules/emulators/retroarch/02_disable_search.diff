@@ -1,7 +1,7 @@
-diff --git a/menu/widgets/menu_entry.c b/menu/widgets/menu_entry.c
-index 0d42ff79d7..b8ec6e14c6 100644
---- a/menu/widgets/menu_entry.c
-+++ b/menu/widgets/menu_entry.c
+diff --git a/menu/menu_entry.c b/menu/menu_entry.c
+index 2ddc723..ad140e3 100644
+--- a/menu/menu_entry.c
++++ b/menu/menu_entry.c
 @@ -493,7 +493,7 @@ int menu_entry_action(menu_entry_t *entry, unsigned i, enum menu_action action)
                    entry->label, entry->type, i);
           break;
@@ -9,5 +9,5 @@ index 0d42ff79d7..b8ec6e14c6 100644
 -         menu_input_dialog_start_search();
 +         //menu_input_dialog_start_search();
           break;
- 
+
        case MENU_ACTION_SCAN:
