@@ -55,6 +55,19 @@ function sources_crosscomp() {
                 [mpc]=1.0.3
             )
             ;;
+        buster)
+           pkgs=(
+               [binutils]=2.31.1
+               [cloog]=0.18.4
+               [gcc]=8.3.0
+               [glibc]=2.28
+               [gmp]=6.1.2
+               [isl]=0.20
+               [kernel]=4.19.50
+               [mpfr]=4.0.2
+               [mpc]=1.1.0
+           )
+           ;;
         *)
             md_ret_errors+=("Unsupported distribution $dist")
             return 1

@@ -37,6 +37,9 @@ function create_chroot_image() {
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
             ;;
         stretch)
+            url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
+            ;;
+        buster)
             url="https://downloads.raspberrypi.org/raspbian_lite_latest"
             ;;
         *)
@@ -83,7 +86,7 @@ function install_rp_image() {
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
 
-    # hostname to masos
+    # hostname to MasOS
     echo "masos" >"$chroot/etc/hostname"
     sed -i "s/raspberrypi/masos/" "$chroot/etc/hosts"
 
@@ -96,7 +99,6 @@ function install_rp_image() {
         # and the init line but leave ours intact
         sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" "$chroot/boot/cmdline.txt"
     fi
-
 
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
@@ -152,6 +154,9 @@ function _init_chroot_image() {
     local nameserver="$(nmcli device show | grep IP4.DNS  | awk '{print $NF; exit}')"
     # so we can resolve inside the chroot
     echo "nameserver $nameserver" >"$chroot"/etc/resolv.conf
+
+    # move /etc/ld.so.preload out of the way to avoid warnings
+    mv "$chroot/etc/ld.so.preload" "$chroot/etc/ld.so.preload.bak"
 }
 
 function _deinit_chroot_image() {
@@ -159,7 +164,12 @@ function _deinit_chroot_image() {
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
 
     trap "" INT
+
     >"$chroot/etc/resolv.conf"
+
+    # restore /etc/ld.so.preload
+    mv "$chroot/etc/ld.so.preload.bak" "$chroot/etc/ld.so.preload"
+
     umount -l "$chroot/proc" "$chroot/dev/pts"
     trap INT
 }
